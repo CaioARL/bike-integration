@@ -38,7 +38,7 @@ public class JwtValidateService {
 
 	public String create(JwtUserDTO subject) throws BikeIntegrationCustomException {
 		return JWT.create().withSubject(ObjectMapperUtils.toJsonString(subject)).withIssuedAt(new Date())
-				.withExpiresAt(new Date(System.currentTimeMillis() + (this.config.expiration())))
+				.withExpiresAt(new Date(System.currentTimeMillis() + (this.config.getExpiration())))
 				.sign(this.createAlgorithm());
 	}
 
@@ -46,8 +46,8 @@ public class JwtValidateService {
 		try {
 			JwtUserDTO subject = this.getSubject(token);
 			return subject != null
-					&& StringUtils.isNotBlank(subject.email())
-					&& StringUtils.isNotBlank(subject.nickname())
+					&& StringUtils.isNotBlank(subject.getEmail())
+					&& StringUtils.isNotBlank(subject.getNickname())
 					&& ArrayUtils.isNotEmpty(roles)
 					&& this.isValidRole(token, roles);
 		} catch (Exception e) {
@@ -86,7 +86,7 @@ public class JwtValidateService {
 	}
 
 	private Algorithm createAlgorithm() throws BikeIntegrationCustomException {
-		return Algorithm.HMAC512(this.config.secretKey().getBytes());
+		return Algorithm.HMAC512(this.config.getSFecretKey().getBytes());
 	}
 
 }

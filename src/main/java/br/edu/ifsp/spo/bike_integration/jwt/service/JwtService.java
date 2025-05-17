@@ -39,7 +39,7 @@ public class JwtService {
 
     public String create(JwtUserDTO subject) throws BikeIntegrationCustomException {
         return JWT.create().withSubject(ObjectMapperUtils.toJsonString(subject)).withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + (this.config.expiration())))
+                .withExpiresAt(new Date(System.currentTimeMillis() + (this.config.getExpiration())))
                 .sign(this.createAlgorithm());
     }
 
@@ -51,7 +51,7 @@ public class JwtService {
      */
 
     private Algorithm createAlgorithm() throws BikeIntegrationCustomException {
-        return Algorithm.HMAC512(this.config.secretKey().getBytes());
+        return Algorithm.HMAC512(this.config.getSecretKey().getBytes());
     }
 
 }

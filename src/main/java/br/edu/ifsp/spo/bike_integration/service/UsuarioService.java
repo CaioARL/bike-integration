@@ -60,8 +60,8 @@ public class UsuarioService {
 	}
 
 	public Usuario loadUsuarioByJwt(JwtUserDTO jwtUserDTO) {
-		return usuarioRepository.findByEmail(jwtUserDTO.email())
-				.orElse(usuarioRepository.findByNomeUsuario(jwtUserDTO.nickname()).orElse(null));
+		return usuarioRepository.findByEmail(jwtUserDTO.getEmail())
+				.orElse(usuarioRepository.findByNomeUsuario(jwtUserDTO.getNickname()).orElse(null));
 	}
 
 	public Usuario createUsuario(UsuarioDTO usuarioDto) {

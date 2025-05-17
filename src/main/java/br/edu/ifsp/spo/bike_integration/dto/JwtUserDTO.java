@@ -1,8 +1,18 @@
 package br.edu.ifsp.spo.bike_integration.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
-public record JwtUserDTO(String nickname, String email, String role) {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
+public class JwtUserDTO {
+
+    private String nickname;
+    private String email;
+    private String role;
 
 }
