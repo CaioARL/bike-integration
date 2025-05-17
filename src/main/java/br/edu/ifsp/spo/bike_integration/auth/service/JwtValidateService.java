@@ -86,7 +86,7 @@ public class JwtValidateService {
 	}
 
 	private Algorithm createAlgorithm() throws BikeIntegrationCustomException {
-		return Algorithm.HMAC512(this.config.getSFecretKey().getBytes());
+		return Algorithm.HMAC512(this.config.getSecretKey().getBytes());
 	}
 
 }
