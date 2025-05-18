@@ -147,16 +147,16 @@ create table if not exists `problema_report` (
 insert into `configuracao_api_externa` (nome, url) values
     ('BRASIL_API', 'https://brasilapi.com.br/api'), 
     ('OPEN_STREET_MAP_API', 'https://nominatim.openstreetmap.org'),
-    ('VIA_CEP', 'https://viacep.com.br')
-on duplicate key update nome = values(nome);
+    ('VIA_CEP', 'https://viacep.com.br') As new
+on duplicate key update nome = new.nome, url = new.url;
 
 -- Níveis de habilidade
 insert into `nivel_habilidade` (nome, descricao) values
     ('Iniciante', 'Ciclista iniciante'),
     ('Intermediário', 'Ciclista intermediário'),
     ('Avançado', 'Ciclista avançado'),
-    ('Profissional', 'Ciclista profissional')
-on duplicate key update nome = values(nome);
+    ('Profissional', 'Ciclista profissional') As new
+on duplicate key update nome = new.nome, descricao = new.descricao;
 
 -- Tipos de evento
 insert into `tipo_evento` (nome, id_nivel_habilidade) values
@@ -181,7 +181,8 @@ insert into `tipo_evento` (nome, id_nivel_habilidade) values
     ('Randonnée/Audax', 2), -- Intermediário
     ('Passeios ciclísticos', 1), -- Iniciante
     ('Desafios beneficentes', 1)  -- Iniciante
-on duplicate key update nome = values(nome);
+    As new
+on duplicate key update nome = new.nome, id_nivel_habilidade = new.id_nivel_habilidade;
 
 insert into `tipo_problema` (nome, descricao) values
     ('Acidente', 'Acidente envolvendo ciclistas.'),
@@ -191,14 +192,20 @@ insert into `tipo_problema` (nome, descricao) values
     ('Falta de sinalização', 'Falta de sinalização adequada para ciclistas.'),
     ('Falta de iluminação', 'Falta de iluminação adequada para ciclistas.'),
     ('Condições climáticas', 'Condições climáticas que podem afetar a segurança dos ciclistas.'),
-    ('Outros', 'Outros problemas que podem afetar a segurança dos ciclistas.')
-on duplicate key update nome = values(nome);
+    ('Outros', 'Outros problemas que podem afetar a segurança dos ciclistas.') As new
+on duplicate key update nome = new.nome, descricao = new.descricao;
 
 BEGIN;
-INSERT INTO tipo_infraestrutura_cicloviaria (id, nome, descricao) VALUES (1, 'Ciclovia', 'Via exclusiva e segregada para uso de bicicletas, separada do tráfego de veículos e pedestres.');
-INSERT INTO tipo_infraestrutura_cicloviaria (id, nome, descricao) VALUES (2, 'Ciclofaixa', 'Faixa destinada às bicicletas, demarcada por sinalização no leito das vias urbanas, sem separação física.');
-INSERT INTO tipo_infraestrutura_cicloviaria (id, nome, descricao) VALUES (3, 'Ciclorrota', 'Trajeto sinalizado em vias compartilhadas para ciclistas, sem exclusividade ou segregação.');
-INSERT INTO tipo_infraestrutura_cicloviaria (id, nome, descricao) VALUES (4, 'Calçada compartilhada', 'Área destinada ao uso conjunto de pedestres, ciclistas e veículos, com prioridade geralmente definida por normas locais.');
+INSERT INTO tipo_infraestrutura_cicloviaria (id, nome, descricao) VALUES (1, 'Ciclovia', 'Via exclusiva e segregada para uso de bicicletas, separada do tráfego de veículos e pedestres.') As new
+on duplicate key update id = new.id, nome = new.nome, descricao = new.descricao;
+INSERT INTO tipo_infraestrutura_cicloviaria (id, nome, descricao) VALUES (2, 'Ciclofaixa', 'Faixa destinada às bicicletas, demarcada por sinalização no leito das vias urbanas, sem separação física.') As new
+on duplicate key update id = new.id, nome = new.nome, descricao = new.descricao;
+INSERT INTO tipo_infraestrutura_cicloviaria (id, nome, descricao) VALUES (3, 'Ciclorrota', 'Trajeto sinalizado em vias compartilhadas para ciclistas, sem exclusividade ou segregação.') As new
+on duplicate key update id = new.id, nome = new.nome, descricao = new.descricao;
+
+INSERT INTO tipo_infraestrutura_cicloviaria (id, nome, descricao) VALUES (4, 'Calçada compartilhada', 'Área destinada ao uso conjunto de pedestres, ciclistas e veículos, com prioridade geralmente definida por normas locais.') As new
+on duplicate key update id = new.id, nome = new.nome, descricao = new.descricao;
+
 INSERT INTO infraestrutura_cicloviaria (json_id, nome_localidade, nota_media, geometria, id_tipo_infraestrutura_cicloviaria) VALUES
 ('way/320729078','', 0, 'Polygon', 4),
 ('way/1299897022','', 0, 'Polygon', 4),
@@ -5634,7 +5641,9 @@ INSERT INTO infraestrutura_cicloviaria (json_id, nome_localidade, nota_media, ge
 ('way/1323451388','', 0, 'LineString', 1),
 ('way/1323451389','', 0, 'LineString', 1),
 ('way/1326276815','Avenida Luís Stamatis', 0, 'LineString', 2),
-('way/1327587116','Rua Alexandre Dumas', 0, 'LineString', 2);
+('way/1327587116','Rua Alexandre Dumas', 0, 'LineString', 2) As new
+on duplicate key update json_id = new.json_id, nome_localidade = new.nome_localidade, nota_media = new.nota_media, geometria = new.geometria, id_tipo_infraestrutura_cicloviaria = new.id_tipo_infraestrutura_cicloviaria;
+
 INSERT INTO trecho (latitude, longitude, id_infraestrutura_cicloviaria) VALUES
 ('-23.5272869', '-46.6659688', 1),
 ('-23.5272928', '-46.6659603', 1),
@@ -42892,5 +42901,7 @@ INSERT INTO trecho (latitude, longitude, id_infraestrutura_cicloviaria) VALUES
 ('-23.4694686', '-46.5749583', 5434),
 ('-23.6281084', '-46.7107947', 5435),
 ('-23.6280135', '-46.7109338', 5435),
-('-23.6278697', '-46.7111526', 5435);
+('-23.6278697', '-46.7111526', 5435) As new 
+on duplicate key update latitude = new.latitude, longitude = new.longitude, id_infraestrutura_cicloviaria = new.id_infraestrutura_cicloviaria;
+
 COMMIT;
