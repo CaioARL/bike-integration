@@ -9,12 +9,11 @@ services:
       - SERVER_PORT=${SERVER_PORT}
       - SERVER_SERVLET_CONTEXT_PATH=${SERVER_SERVLET_CONTEXT_PATH}
 
-      - DB_HOST=db
+      - DB_HOST=${DB_HOST}
       - DB_PORT=3306
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_SCHEMA=${DB_SCHEMA}
 
       - DECRYPTION_KEY=${DECRYPTION_KEY}
 
@@ -23,26 +22,6 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_EXPIRATION=${JWT_EXPIRATION}
       
-      - AWS_REGION=${AWS_REGION}
-      - AWS_PROFILE=${AWS_PROFILE}
-      - AWS_ENDPOINT=${AWS_ENDPOINT}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
 
       - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
-    depends_on:
-      - db
-
-  db:
-    image: mysql:8.0
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-
-volumes:
-  db_data:
