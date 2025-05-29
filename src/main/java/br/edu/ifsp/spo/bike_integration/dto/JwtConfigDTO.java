@@ -1,8 +1,17 @@
 package br.edu.ifsp.spo.bike_integration.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
-public record JwtConfigDTO(String accessKey, String secretKey, Long expiration) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class JwtConfigDTO {
 
+    private String accessKey;
+    private String secretKey;
+    private Long expiration;
 }

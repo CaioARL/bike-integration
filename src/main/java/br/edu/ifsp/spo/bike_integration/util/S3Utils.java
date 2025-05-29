@@ -1,7 +1,5 @@
 package br.edu.ifsp.spo.bike_integration.util;
 
-import java.util.UUID;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
