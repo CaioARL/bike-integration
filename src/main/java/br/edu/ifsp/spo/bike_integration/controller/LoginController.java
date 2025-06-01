@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,15 @@ public class LoginController {
 	public ResponseEntity<Usuario> login(@RequestBody UsuarioLoginDTO usuario)
 			throws CryptoException, MessagingException {
 		return ResponseEntity.ok(loginService.login(usuario));
+	}
+
+	@Role({ RoleType.ADMIN, RoleType.PF, RoleType.PJ })
+	@BearerToken
+	@GetMapping("/")
+	@Operation(summary = "Verifica se o usuário está autenticado.")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void isAuthenticated()
+			throws CryptoException, MessagingException {
 	}
 
 	@Role({ RoleType.PF, RoleType.PJ })

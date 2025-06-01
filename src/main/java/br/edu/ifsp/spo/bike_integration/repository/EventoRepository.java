@@ -26,7 +26,7 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
 			+ "AND (:nivelHabilidade IS NULL OR te.id_nivel_habilidade = :nivelHabilidade) "
 			+ "AND (:aprovado IS NULL OR e.aprovado = :aprovado) "
 			+ "AND (:idUsuario IS NULL OR e.id_usuario = :idUsuario)"
-			+ "ORDER BY e.data DESC LIMIT :limit OFFSET :offset";
+			+ "ORDER BY e.id DESC LIMIT :limit OFFSET :offset";
 
 	String COUNT_QUERY_FOR_LIST_FILTER = "SELECT COUNT(e.id) FROM evento e "
 			+ "INNER JOIN tipo_evento te ON e.id_tipo_evento = te.id "
