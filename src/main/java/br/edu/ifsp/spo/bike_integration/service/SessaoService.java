@@ -3,12 +3,12 @@ package br.edu.ifsp.spo.bike_integration.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
-import br.edu.ifsp.spo.bike_integration.jwt.service.JwtService;
 import br.edu.ifsp.spo.bike_integration.model.Sessao;
 import br.edu.ifsp.spo.bike_integration.model.Usuario;
+import br.edu.ifsp.spo.bike_integration.model.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.repository.SessaoRepository;
+import br.edu.ifsp.spo.bike_integration.service.jwt.JwtService;
 
 @Service
 public class SessaoService {

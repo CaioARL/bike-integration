@@ -3,7 +3,7 @@ package br.edu.ifsp.spo.bike_integration.model;
 import java.time.LocalDateTime;
 
 import br.edu.ifsp.spo.bike_integration.converter.EnderecoConverter;
-import br.edu.ifsp.spo.bike_integration.dto.EnderecoDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.EnderecoDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;

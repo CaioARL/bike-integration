@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.edu.ifsp.spo.bike_integration.dto.AvaliacaoDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.PaginationType;
 import br.edu.ifsp.spo.bike_integration.model.AvaliacaoInfraestruturaCicloviaria;
+import br.edu.ifsp.spo.bike_integration.model.dto.AvaliacaoDTO;
+import br.edu.ifsp.spo.bike_integration.model.response.AvaliacaoDetailResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.ListAvaliacoesResponse;
 import br.edu.ifsp.spo.bike_integration.repository.AvaliacaoInfraestruturaCicloviariaRepository;
-import br.edu.ifsp.spo.bike_integration.response.AvaliacaoDetailResponse;
-import br.edu.ifsp.spo.bike_integration.response.ListAvaliacoesResponse;
 
 @Service
 public class AvaliacaoInfraestruturaCicloviariaService {

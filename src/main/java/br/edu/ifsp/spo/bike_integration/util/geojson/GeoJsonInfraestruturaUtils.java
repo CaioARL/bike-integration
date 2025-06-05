@@ -5,11 +5,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO;
-import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO.FeatureDto;
-import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO.GeometryDto;
-import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO.PropertiesDto;
 import br.edu.ifsp.spo.bike_integration.model.InfraestruturaCicloviaria;
+import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO.FeatureDto;
+import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO.GeometryDto;
+import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO.PropertiesDto;
 import br.edu.ifsp.spo.bike_integration.util.GeoJsonUtils;
 
 public class GeoJsonInfraestruturaUtils implements GeoJsonUtils<List<InfraestruturaCicloviaria>> {

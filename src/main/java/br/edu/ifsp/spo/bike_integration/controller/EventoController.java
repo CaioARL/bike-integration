@@ -22,12 +22,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
-import br.edu.ifsp.spo.bike_integration.dto.EventoDTO;
-import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO;
-import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Evento;
-import br.edu.ifsp.spo.bike_integration.response.ListEventoResponse;
+import br.edu.ifsp.spo.bike_integration.model.dto.EventoDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.JwtUserDTO;
+import br.edu.ifsp.spo.bike_integration.model.response.ListEventoResponse;
 import br.edu.ifsp.spo.bike_integration.service.EventoService;
 import br.edu.ifsp.spo.bike_integration.service.UsuarioService;
 import br.edu.ifsp.spo.bike_integration.util.FileUtils;

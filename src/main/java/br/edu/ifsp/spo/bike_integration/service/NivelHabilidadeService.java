@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.edu.ifsp.spo.bike_integration.dto.NivelHabilidadeDTO;
 import br.edu.ifsp.spo.bike_integration.model.NivelHabilidade;
+import br.edu.ifsp.spo.bike_integration.model.dto.NivelHabilidadeDTO;
 import br.edu.ifsp.spo.bike_integration.repository.NivelHabilidadeRepository;
 
 @Service

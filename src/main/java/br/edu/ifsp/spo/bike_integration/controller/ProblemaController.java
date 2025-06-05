@@ -20,10 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
-import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
-import br.edu.ifsp.spo.bike_integration.dto.ProblemaDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Problema;
+import br.edu.ifsp.spo.bike_integration.model.dto.JwtUserDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.ProblemaDTO;
 import br.edu.ifsp.spo.bike_integration.service.ProblemaService;
 import br.edu.ifsp.spo.bike_integration.util.FileUtils;
 import io.swagger.v3.oas.annotations.Operation;

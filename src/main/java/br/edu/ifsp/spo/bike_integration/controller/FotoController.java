@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
-import br.edu.ifsp.spo.bike_integration.aws.service.S3Service;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
+import br.edu.ifsp.spo.bike_integration.service.aws.S3Service;
 import br.edu.ifsp.spo.bike_integration.util.ResponseUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

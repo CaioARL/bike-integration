@@ -15,7 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import br.edu.ifsp.spo.bike_integration.exception.BikeIntegrationCustomException;
-import br.edu.ifsp.spo.bike_integration.response.ErrorResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface ResponseUtils {

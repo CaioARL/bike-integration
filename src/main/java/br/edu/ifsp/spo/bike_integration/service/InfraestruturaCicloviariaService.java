@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO;
 import br.edu.ifsp.spo.bike_integration.factory.GeoJsonUtilFactory;
 import br.edu.ifsp.spo.bike_integration.model.InfraestruturaCicloviaria;
+import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO;
 import br.edu.ifsp.spo.bike_integration.repository.InfraestruturaCicloviariaRepository;
 
 @Service
@@ -16,6 +16,10 @@ public class InfraestruturaCicloviariaService {
 
 	@Autowired
 	private InfraestruturaCicloviariaRepository infraestruturaCicloviariaRepository;
+
+	public List<InfraestruturaCicloviaria> findAll() {
+		return infraestruturaCicloviariaRepository.findAll();
+	}
 
 	public InfraestruturaCicloviaria findById(Long id) {
 		return infraestruturaCicloviariaRepository.findById(id).orElse(null);

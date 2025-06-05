@@ -3,8 +3,8 @@ package br.edu.ifsp.spo.bike_integration.converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.edu.ifsp.spo.bike_integration.dto.EnderecoDTO;
 import br.edu.ifsp.spo.bike_integration.exception.BikeIntegrationCustomException;
+import br.edu.ifsp.spo.bike_integration.model.dto.EnderecoDTO;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

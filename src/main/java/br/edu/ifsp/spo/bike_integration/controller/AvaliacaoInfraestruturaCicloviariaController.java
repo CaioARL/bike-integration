@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
-import br.edu.ifsp.spo.bike_integration.dto.AvaliacaoDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
-import br.edu.ifsp.spo.bike_integration.response.AvaliacaoDetailResponse;
-import br.edu.ifsp.spo.bike_integration.response.ListAvaliacoesResponse;
+import br.edu.ifsp.spo.bike_integration.model.dto.AvaliacaoDTO;
+import br.edu.ifsp.spo.bike_integration.model.response.AvaliacaoDetailResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.ListAvaliacoesResponse;
 import br.edu.ifsp.spo.bike_integration.service.AvaliacaoInfraestruturaCicloviariaService;
 import br.edu.ifsp.spo.bike_integration.service.InfraestruturaCicloviariaService;
 import io.swagger.v3.oas.annotations.Operation;
