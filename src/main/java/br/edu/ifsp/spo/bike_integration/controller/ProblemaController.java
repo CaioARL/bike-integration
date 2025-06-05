@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
+import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.dto.ProblemaDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Problema;
@@ -57,7 +59,8 @@ public class ProblemaController {
 	@Operation(summary = "Checar a possibilidade de criação de problema em um trecho.")
 	public ResponseEntity<Boolean> existsTrechoByLatitudeAndLongitude(@RequestParam Double latitude,
 			@RequestParam Double longitude) {
-		return ResponseEntity.status(HttpStatus.OK).body(problemaService.existsTrechoByLatitudeAndLongitude(latitude, longitude));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(problemaService.existsTrechoByLatitudeAndLongitude(latitude, longitude));
 	}
 
 	@Role(RoleType.PF)
@@ -91,8 +94,9 @@ public class ProblemaController {
 	@BearerToken
 	@PostMapping(path = "/{id}/report", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Reporta um problema como não existente.")
-	public ResponseEntity<Void> reportProblem(@PathVariable Long id) {
-		problemaService.reportProblem(id);
+	public ResponseEntity<Void> reportProblem(@AuthenticationPrincipal JwtUserDTO jwtUserDTO, @PathVariable Long id,
+			@RequestParam boolean exists) {
+		problemaService.reportProblem(id, jwtUserDTO, exists);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 

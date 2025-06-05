@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.edu.ifsp.spo.bike_integration.aws.service.S3Service;
+import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.dto.UsuarioAdmDTO;
 import br.edu.ifsp.spo.bike_integration.dto.UsuarioDTO;
 import br.edu.ifsp.spo.bike_integration.dto.UsuarioUpdateDTO;
@@ -21,9 +22,8 @@ import br.edu.ifsp.spo.bike_integration.rest.service.OpenStreetMapApiService;
 import br.edu.ifsp.spo.bike_integration.util.FormatUtils;
 import br.edu.ifsp.spo.bike_integration.util.S3Utils;
 import br.edu.ifsp.spo.bike_integration.util.validate.CpfValidate;
+import br.edu.ifsp.spo.bike_integration.util.validate.CpfValidate.CpfValidationResult;
 import jakarta.transaction.Transactional;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Service
@@ -47,7 +47,7 @@ public class UsuarioService {
 	@Value("${aws.s3.bucket-name}")
 	private String bucketName;
 
-	public Usuario loadUsuarioById(Long id) {
+	public Usuario loadUsuarioById(String id) {
 		return usuarioRepository.findById(id).orElse(null);
 	}
 
@@ -57,6 +57,11 @@ public class UsuarioService {
 
 	public Usuario loadUsuarioByNomeUsuario(String nomeUsuario) {
 		return usuarioRepository.findByNomeUsuario(nomeUsuario).orElse(null);
+	}
+
+	public Usuario loadUsuarioByJwt(JwtUserDTO jwtUserDTO) {
+		return usuarioRepository.findByEmail(jwtUserDTO.getEmail())
+				.orElse(usuarioRepository.findByNomeUsuario(jwtUserDTO.getNickname()).orElse(null));
 	}
 
 	public Usuario createUsuario(UsuarioDTO usuarioDto) {
@@ -83,6 +88,14 @@ public class UsuarioService {
 
 	}
 
+	public Usuario refreshSession(String email) {
+		Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+		if (usuario != null) {
+			sessaoService.create(usuario);
+		}
+		return usuarioRepository.findById(usuario.getId()).orElse(null);
+	}
+
 	public Usuario createUsuarioAdm(UsuarioAdmDTO usuarioAdmoDto) {
 		// Salva o usuário
 		Usuario usuario = usuarioRepository.saveAndFlush(Usuario.builder().nome(usuarioAdmoDto.getNome())
@@ -98,7 +111,7 @@ public class UsuarioService {
 
 	@Modifying
 	@Transactional
-	public Usuario updateUsuario(Long id, UsuarioUpdateDTO usuarioDto) {
+	public Usuario updateUsuario(String id, UsuarioUpdateDTO usuarioDto) {
 		Usuario usuario = usuarioRepository.findById(id).orElse(null);
 		if (usuario == null) {
 			return null;
@@ -111,11 +124,11 @@ public class UsuarioService {
 		return usuarioRepository.save(usuario);
 	}
 
-	public void updateFotoUsuario(Long id, MultipartFile file) {
+	public void updateFotoUsuario(String id, MultipartFile file) {
 		try {
 			Usuario usuario = usuarioRepository.findById(id).orElse(null);
 			if (usuario != null) {
-				String s3Key = S3Utils.createS3Key("usuario", id, file);
+				String s3Key = S3Utils.createS3Key("usuario", id.toString(), file);
 				PutObjectResponse response = s3Service.put(S3Utils.createRestPutObjectRequest(bucketName, s3Key),
 						file.getBytes());
 				if (response.sdkHttpResponse().isSuccessful()) {
@@ -130,11 +143,22 @@ public class UsuarioService {
 		}
 	}
 
-	public void deleteUsuario(Long id) {
+	public void deleteUsuario(String id) {
 		usuarioRepository.deleteById(id);
 	}
 
-	public String validateCpf(String cpf) {
-		return CpfValidate.validate(cpf);
+	public CpfValidationResult validateCpf(String cpf) {
+		return CpfValidate.validate(cpf).isValid()
+				? (usuarioRepository.existsByCpf(cpf) ? (new CpfValidationResult(false, "CPF já cadastrado."))
+						: (new CpfValidationResult(true, "CPF disponível.")))
+				: new CpfValidationResult(false, "CPF inválido.");
+	}
+
+	public Boolean validateUsuarioByCnpj(String cnpj) {
+		return usuarioRepository.existsByCnpj(cnpj);
+	}
+
+	public Boolean validateUsuarioByEmailOrNomeUsuario(String nomeUsuario, String email) {
+		return usuarioRepository.existsByNomeUsuarioOrEmail(nomeUsuario, email);
 	}
 }

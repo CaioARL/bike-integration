@@ -30,5 +30,15 @@ public interface AvaliacaoInfraestruturaCicloviariaRepository
 			@Param("idInfraestruturaCicloviaria") Long idInfraestruturaCicloviaria,
 			@Param("nota") Integer nota);
 
+	@Query(value = "SELECT count(*) FROM avaliacao_infraestrutura_cicloviaria a "
+			+ "WHERE a.id_infraestrutura_cicloviaria = :idInfraestruturaCicloviaria", nativeQuery = true)
+	Long countByInfraestruturaCicloviariaId(@Param("idInfraestruturaCicloviaria") Long idInfraestruturaCicloviaria);
+
+	@Query(value = "SELECT a.nota, COUNT(a.nota) FROM avaliacao_infraestrutura_cicloviaria a "
+			+ "WHERE a.id_infraestrutura_cicloviaria = :idInfraestruturaCicloviaria "
+			+ "GROUP BY a.nota", nativeQuery = true)
+	List<Object[]> findAvaliacoesDetailsByInfraestruturaCicloviariaId(
+			@Param("idInfraestruturaCicloviaria") Long idInfraestruturaCicloviaria);
+
 	List<AvaliacaoInfraestruturaCicloviaria> findAllByInfraestruturaCicloviariaId(Long idInfraestruturaCicloviaria);
 }

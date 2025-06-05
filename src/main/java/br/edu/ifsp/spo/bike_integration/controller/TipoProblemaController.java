@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
+import br.edu.ifsp.spo.bike_integration.annotation.XAccessKey;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.TipoProblema;
 import br.edu.ifsp.spo.bike_integration.service.TipoProblemaService;
@@ -25,8 +26,9 @@ public class TipoProblemaController {
     @Autowired
     private TipoProblemaService tipoProblemaService;
 
-    @Role(RoleType.PF)
+    @Role({RoleType.PF, RoleType.PJ, RoleType.ADMIN})
     @BearerToken
+    @XAccessKey
     @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retorna todos os tipos de problemas cadastrados.")
     public ResponseEntity<List<TipoProblema>> listarTiposProblemas() {

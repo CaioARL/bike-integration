@@ -92,19 +92,7 @@ public class WebSecurityConfig {
 		matchers.add(new RegexRequestMatcher("/v3/api-docs.*", null));
 		matchers.add(new RegexRequestMatcher("/api-docs.*", null));
 		matchers.add(new RegexRequestMatcher("/swagger.*", null));
-		matchers.add(new RegexRequestMatcher("/v1/app.*", null));
 		matchers.add(new AntPathRequestMatcher("/v1/auth", HttpMethod.POST.name()));
-
-		// Public web app resources
-		matchers.add(new RegexRequestMatcher("/app/images.*", null));
-		matchers.add(new AntPathRequestMatcher("/app/utils*", null));
-		matchers.add(new AntPathRequestMatcher("/app/home*", null));
-		matchers.add(new AntPathRequestMatcher("/app/", null));
-		matchers.add(new AntPathRequestMatcher("/app/login*", null));
-		matchers.add(new AntPathRequestMatcher("/app/do/login/**", HttpMethod.POST.name()));
-		matchers.add(new AntPathRequestMatcher("/app/logout*", null));
-		matchers.add(new AntPathRequestMatcher("/app/evento*", null));
-
 		return matchers;
 	}
 

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class AvaliacaoDTO {
 
 	@Schema(example = "1")
-	private Long idUsuario;
+	private String idUsuario;
 
 	@Schema(example = "1")
 	private Long idInfraestruturaCicloviaria;

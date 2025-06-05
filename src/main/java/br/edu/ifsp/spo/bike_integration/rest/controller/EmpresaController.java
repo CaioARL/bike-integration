@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
+import br.edu.ifsp.spo.bike_integration.annotation.XAccessKey;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.response.BrasilApiCnpjResponse;
 import br.edu.ifsp.spo.bike_integration.rest.service.BrasilApiService;
@@ -32,8 +33,9 @@ public class EmpresaController {
 		return ResponseEntity.ok(brasilApiService.buscarEmpresaPorCnpj(cnpj));
 	}
 
-	@Role({ RoleType.PJ })
+	@Role({ RoleType.PF, RoleType.ADMIN })
 	@BearerToken
+	@XAccessKey
 	@GetMapping(path = "/is/active/cnpj", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Valida se o cnpj é ativo.")
 	public ResponseEntity<Boolean> validateCnpj(String cnpj) throws NotFoundException {

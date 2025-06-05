@@ -1,6 +1,9 @@
 package br.edu.ifsp.spo.bike_integration.util.geojson;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO;
 import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO.FeatureDto;
@@ -13,9 +16,19 @@ public class GeoJsonInfraestruturaUtils implements GeoJsonUtils<List<Infraestrut
 
 	@Override
 	public GeoJsonDTO convertToGeoJson(List<InfraestruturaCicloviaria> vias) {
-		List<FeatureDto> features = vias.parallelStream().map(this::createFeature).toList();
-
-		return GeoJsonDTO.builder().type("FeatureCollection").features(features).build();
+		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		try {
+			Future<List<FeatureDto>> future = executorService
+					.submit(() -> vias.parallelStream().map(this::createFeature).toList());
+			return GeoJsonDTO.builder()
+					.type("FeatureCollection")
+					.features(future.get())
+					.build();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			executorService.shutdown();
+		}
 	}
 
 	/*
@@ -25,7 +38,7 @@ public class GeoJsonInfraestruturaUtils implements GeoJsonUtils<List<Infraestrut
 	private FeatureDto createFeature(InfraestruturaCicloviaria via) {
 		// Properties
 		PropertiesDto properties = PropertiesDto.builder().name(via.getNome()).id(String.valueOf(via.getId()))
-				.type(via.getTipoInfraestruturaCicloviaria().getNome()).build();
+				.type(via.getTipoInfraestruturaCicloviaria().getNome()).notaMedia(via.getNotaMedia()).build();
 
 		// Coordinates
 		List<?> coordinates = via.getTrechos().stream()

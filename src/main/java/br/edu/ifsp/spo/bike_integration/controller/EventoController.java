@@ -7,6 +7,7 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,10 +24,12 @@ import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.dto.EventoDTO;
 import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO;
+import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Evento;
 import br.edu.ifsp.spo.bike_integration.response.ListEventoResponse;
 import br.edu.ifsp.spo.bike_integration.service.EventoService;
+import br.edu.ifsp.spo.bike_integration.service.UsuarioService;
 import br.edu.ifsp.spo.bike_integration.util.FileUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,6 +41,9 @@ public class EventoController {
 
 	@Autowired
 	private EventoService eventoService;
+
+	@Autowired
+	private UsuarioService usuarioService;
 
 	@Role({ RoleType.PF, RoleType.PJ })
 	@BearerToken
@@ -56,7 +62,7 @@ public class EventoController {
 			@RequestParam(required = false) Boolean gratuito,
 			@RequestParam(required = false) Boolean aprovado) {
 		return ResponseEntity.ok(eventoService.listarEventos(pagina, nome, descricao, data, cidade, estado, faixaKm,
-				tipoEvento, nivelHabilidade, gratuito, aprovado));
+				tipoEvento, nivelHabilidade, gratuito, aprovado, null));
 	}
 
 	@Role(RoleType.PJ)
@@ -130,5 +136,26 @@ public class EventoController {
 			@RequestParam(required = true) Double longitude,
 			@RequestParam(required = true) Double raio) {
 		return ResponseEntity.ok(eventoService.buscarEventosByRadius(latitude, longitude, raio));
+	}
+
+	@Role({ RoleType.PJ })
+	@BearerToken
+	@GetMapping(path = "/usuario/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Busca eventos de um usuário específico.")
+	public ResponseEntity<ListEventoResponse> buscarEventosByUsuario(
+			@AuthenticationPrincipal JwtUserDTO jwtUserDTO,
+			@RequestParam(required = true) Long pagina,
+			@RequestParam(required = false) String nome,
+			@RequestParam(required = false) String descricao,
+			@RequestParam(required = false) String data,
+			@RequestParam(required = false) String cidade,
+			@RequestParam(required = false) String estado,
+			@RequestParam(required = false) Long faixaKm,
+			@RequestParam(required = false) Long tipoEvento,
+			@RequestParam(required = false) Long nivelHabilidade,
+			@RequestParam(required = false) Boolean gratuito,
+			@RequestParam(required = false) Boolean aprovado) {
+		return ResponseEntity.ok(eventoService.listarEventos(pagina, nome, descricao, data, cidade, estado, faixaKm,
+				tipoEvento, nivelHabilidade, gratuito, aprovado, usuarioService.loadUsuarioByJwt(jwtUserDTO).getId()));
 	}
 }

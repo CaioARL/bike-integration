@@ -18,26 +18,28 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
 			+ "INNER JOIN tipo_evento te ON e.id_tipo_evento = te.id "
 			+ "WHERE (:nome IS NULL OR LOWER(e.nome) LIKE LOWER(CONCAT('%', :nome, '%'))) "
 			+ "AND (:descricao IS NULL OR LOWER(e.descricao) LIKE LOWER(CONCAT('%', :descricao, '%'))) "
-			+ "AND (:data IS NULL OR DATE(e.data) = DATE(:data)) "
+			+ "AND (:data IS NULL OR e.data = :data) "
 			+ "AND (:cidade IS NULL OR LOWER(JSON_EXTRACT(e.endereco, '$.cidade')) LIKE LOWER(CONCAT('%', :cidade, '%'))) "
 			+ "AND (:estado IS NULL OR LOWER(JSON_EXTRACT(e.endereco, '$.estado')) LIKE LOWER(CONCAT('%', :estado, '%'))) "
 			+ "AND (:faixaKm IS NULL OR e.faixa_km = :faixaKm) " + "AND (:gratuito IS NULL OR e.gratuito = :gratuito) "
 			+ "AND (:tipoEvento IS NULL OR te.id = :tipoEvento) "
 			+ "AND (:nivelHabilidade IS NULL OR te.id_nivel_habilidade = :nivelHabilidade) "
 			+ "AND (:aprovado IS NULL OR e.aprovado = :aprovado) "
-			+ "ORDER BY e.data DESC LIMIT :limit OFFSET :offset";
+			+ "AND (:idUsuario IS NULL OR e.id_usuario = :idUsuario)"
+			+ "ORDER BY e.id DESC LIMIT :limit OFFSET :offset";
 
 	String COUNT_QUERY_FOR_LIST_FILTER = "SELECT COUNT(e.id) FROM evento e "
 			+ "INNER JOIN tipo_evento te ON e.id_tipo_evento = te.id "
 			+ "WHERE (:nome IS NULL OR LOWER(e.nome) LIKE LOWER(CONCAT('%', :nome, '%'))) "
 			+ "AND (:descricao IS NULL OR LOWER(e.descricao) LIKE LOWER(CONCAT('%', :descricao, '%'))) "
-			+ "AND (:data IS NULL OR DATE(e.data) = DATE(:data)) "
+			+ "AND (:data IS NULL OR e.data = :data) "
 			+ "AND (:cidade IS NULL OR LOWER(JSON_EXTRACT(e.endereco, '$.cidade')) LIKE LOWER(CONCAT('%', :cidade, '%'))) "
 			+ "AND (:estado IS NULL OR LOWER(JSON_EXTRACT(e.endereco, '$.estado')) LIKE LOWER(CONCAT('%', :estado, '%'))) "
 			+ "AND (:faixaKm IS NULL OR e.faixa_km = :faixaKm) " + "AND (:gratuito IS NULL OR e.gratuito = :gratuito) "
 			+ "AND (:tipoEvento IS NULL OR te.id = :tipoEvento) "
 			+ "AND (:nivelHabilidade IS NULL OR te.id_nivel_habilidade = :nivelHabilidade) "
-			+ "AND (:aprovado IS NULL OR e.aprovado = :aprovado) ";
+			+ "AND (:aprovado IS NULL OR e.aprovado = :aprovado) "
+			+ "AND (:idUsuario IS NULL OR e.id_usuario = :idUsuario) ";
 
 	Optional<Evento> findById(Long id);
 
@@ -48,13 +50,14 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
 			@Param("descricao") String descricao, @Param("data") String data, @Param("cidade") String cidade,
 			@Param("estado") String estado, @Param("faixaKm") Long faixaKm, @Param("tipoEvento") Long tipoEvento,
 			@Param("nivelHabilidade") Long nivelHabilidade, @Param("gratuito") Boolean gratuito,
-			@Param("aprovado") Boolean aprovado);
+			@Param("aprovado") Boolean aprovado, @Param("idUsuario") String idUsuario);
 
 	@Query(value = COUNT_QUERY_FOR_LIST_FILTER, nativeQuery = true)
 	Long countAll(@Param("nome") String nome, @Param("descricao") String descricao, @Param("data") String data,
 			@Param("cidade") String cidade, @Param("estado") String estado, @Param("faixaKm") Long faixaKm,
 			@Param("tipoEvento") Long tipoEvento, @Param("nivelHabilidade") Long nivelHabilidade,
-			@Param("gratuito") Boolean gratuito, @Param("aprovado") Boolean aprovado);
+			@Param("gratuito") Boolean gratuito, @Param("aprovado") Boolean aprovado,
+			@Param("idUsuario") String idUsuario);
 
 	@Query(value = "SELECT * FROM evento e WHERE ST_Distance_Sphere("
 			+ "POINT(CAST(JSON_EXTRACT(e.endereco, '$.longitude') AS DECIMAL(10,8)), "

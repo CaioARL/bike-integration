@@ -17,12 +17,6 @@ public class LoginService {
 	private UsuarioRepository usuarioRepository;
 
 	@Autowired
-	private TokenService tokenService;
-
-	@Autowired
-	private EmailService emailService;
-
-	@Autowired
 	private SessaoService sessaoService;
 
 	public Usuario login(UsuarioLoginDTO usuario) throws CryptoException, MessagingException {
@@ -59,25 +53,17 @@ public class LoginService {
 		return usuarioRepository.findById(usuarioLogado.getId()).orElse(null);
 	}
 
-	public void recoverPassword(String idUsuario, String token, String novaSenha)
+	public void recoverPassword(String idUsuario, String novaSenha)
 			throws CryptoException, MessagingException {
-		Usuario usuario = this.usuarioRepository.findById(Long.parseLong(idUsuario)).orElse(null);
+		Usuario usuario = this.usuarioRepository.findById(idUsuario).orElse(null);
 
 		if (usuario == null) {
 			throw new IllegalArgumentException("Usuário não encontrado!");
 		}
 
-		if (Boolean.FALSE.equals(this.tokenService.isValidToken(token, usuario.getEmail()))) {
-			throw new IllegalArgumentException("Token inválido!");
-		}
-
 		usuario.setHash(CryptoUtils.generateKeyAsString());
 		usuario.setSenha(CryptoUtils.encrypt(novaSenha, usuario.getHash()));
 		this.usuarioRepository.save(usuario);
-
-		this.tokenService.disableToken(this.tokenService.getToken(token));
-
-		this.emailService.sendRecuperacaoTokenEmail(usuario);
 	}
 
 }
