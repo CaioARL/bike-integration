@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>br.edu.ifsp.spo</groupId>
 	<artifactId>bike-integration</artifactId>
-	<version>feature-docker-SNAPSHOT</version>
+	<version>develop-SNAPSHOT</version>
 	<name>bike-integration</name>
 	<description>Api de integração para gerenciamento do APP principal</description>
 	<url />
