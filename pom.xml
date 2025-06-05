@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>br.edu.ifsp.spo</groupId>
 	<artifactId>bike-integration</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.2.0</version>
 	<name>bike-integration</name>
 	<description>Api de integração para gerenciamento do APP principal</description>
 	<url />
@@ -124,11 +124,6 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>s3</artifactId>
-			<version>${aws-java-sdk-s3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>

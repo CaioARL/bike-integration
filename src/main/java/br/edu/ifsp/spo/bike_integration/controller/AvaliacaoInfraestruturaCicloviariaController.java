@@ -17,6 +17,7 @@ import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.dto.AvaliacaoDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
+import br.edu.ifsp.spo.bike_integration.response.AvaliacaoDetailResponse;
 import br.edu.ifsp.spo.bike_integration.response.ListAvaliacoesResponse;
 import br.edu.ifsp.spo.bike_integration.service.AvaliacaoInfraestruturaCicloviariaService;
 import br.edu.ifsp.spo.bike_integration.service.InfraestruturaCicloviariaService;
@@ -55,6 +56,17 @@ public class AvaliacaoInfraestruturaCicloviariaController {
 
 		return ResponseEntity.ok().body(avaliacaoInfraestruturaCicloviariaService
 				.getAllByInfraestruturaCicloviariaIdAndNota(idInfraestruturaCicloviaria, nota, pagina));
+	}
+
+	@Role(RoleType.PF)
+	@BearerToken
+	@GetMapping(path = "/infraestrutura/{idInfraestruturaCicloviaria}/details", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Recupera detalhes de uma infraestrutura cicloviária.")
+	public ResponseEntity<AvaliacaoDetailResponse> getDetailsByInfraestruturaCicloviariaId(
+			@PathVariable Long idInfraestruturaCicloviaria) {
+		return ResponseEntity.ok()
+				.body(avaliacaoInfraestruturaCicloviariaService.getDetails(idInfraestruturaCicloviaria));
+
 	}
 
 }

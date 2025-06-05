@@ -1,5 +1,6 @@
 package br.edu.ifsp.spo.bike_integration.util.validate;
 
+
 import org.springframework.stereotype.Component;
 
 import br.com.caelum.stella.validation.CPFValidator;
@@ -8,11 +9,13 @@ import br.edu.ifsp.spo.bike_integration.util.FormatUtils;
 @Component
 public interface CpfValidate {
 
-	String CPF_LENGTH_ERROR = "CPF deve conter 11 caracteres";
-	String CPF_INVALID_ERROR = "CPF inválido";
-	String CPF_VALID = "CPF válido";
+	public record CpfValidationResult(boolean isValid, String message) {};
+	
+	CpfValidationResult CPF_LENGTH_ERROR = new CpfValidationResult(false, "CPF deve conter 11 caracteres");
+	CpfValidationResult CPF_INVALID_ERROR = new CpfValidationResult(false, "CPF inválido");
+	CpfValidationResult CPF_VALID = new CpfValidationResult(true, "CPF válido");
 
-	static String validate(String cpf) {
+	static CpfValidationResult validate(String cpf) {
 		cpf = FormatUtils.removeNonNumeric(cpf);
 
 		if (!isCpfLengthValid(cpf)) {

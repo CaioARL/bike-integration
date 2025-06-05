@@ -1,0 +1,27 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=${SERVER_PORT}
+      - SERVER_SERVLET_CONTEXT_PATH=${SERVER_SERVLET_CONTEXT_PATH}
+
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=3306
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+      - DECRYPTION_KEY=${DECRYPTION_KEY}
+
+      - X_ACCESS_KEY=${X_ACCESS_KEY}
+      - JWT_ACCESS_KEY=${JWT_ACCESS_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+
+      - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}

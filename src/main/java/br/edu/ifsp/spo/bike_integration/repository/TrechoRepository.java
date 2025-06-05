@@ -26,7 +26,7 @@ public interface TrechoRepository extends JpaRepository<Trecho, Long> {
 
 	@Query(value = "SELECT t.* FROM trecho t "
 			+ "JOIN infraestrutura_cicloviaria e ON e.id = t.id_infraestrutura_cicloviaria "
-			+ "WHERE ST_Distance_Sphere(POINT(t.latitude, t.longitude), POINT(:latitude, :longitude)) <= 10 "
+			+ "WHERE ST_Distance_Sphere(POINT(t.latitude, t.longitude), POINT(:latitude, :longitude)) <= 100 "
 			+ "ORDER BY ST_Distance_Sphere(POINT(t.latitude, t.longitude), POINT(:latitude, :longitude)) ASC "
 			+ "LIMIT 1", nativeQuery = true)
 	Trecho findTrechoProximoByLocation(@Param("latitude") double latitude, @Param("longitude") double longitude);

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +21,6 @@ import br.edu.ifsp.spo.bike_integration.configuration.WebSecurityConfig;
 import br.edu.ifsp.spo.bike_integration.dto.StandardErrorDTO;
 import br.edu.ifsp.spo.bike_integration.exception.CryptoException;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
-import br.edu.ifsp.spo.bike_integration.util.CryptoUtils;
 import br.edu.ifsp.spo.bike_integration.util.RequestUtils;
 import br.edu.ifsp.spo.bike_integration.util.ResponseUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,9 +28,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
-
-	@Value("${decryption.key}")
-	private String decryptionKey;
 
 	@Autowired
 	private JwtValidateService jwtValidateService;
@@ -71,9 +66,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 	private boolean authenticateWithBearer(HttpServletRequest request, HttpServletResponse response, RoleType[] roles)
 			throws IOException, CryptoException {
 		Optional<String> optToken = RequestUtils.getBearerToken(request);
-		if (optToken.isPresent() && !optToken.get().startsWith("ey")) {
-			optToken = Optional.of(CryptoUtils.decryptFromHex(optToken.get(), decryptionKey));
-		}
 		if (optToken.isEmpty() || !this.jwtValidateService.isAuthenticated(optToken.get(), roles)) {
 			return false;
 		}

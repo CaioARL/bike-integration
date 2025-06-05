@@ -1,6 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -15,8 +16,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -41,8 +40,8 @@ import lombok.Setter;
 public class Usuario {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@Column(name = "id", updatable = false, nullable = false)
+	private String id;
 
 	@Column(name = "nome", nullable = false)
 	private String nome;
@@ -90,6 +89,9 @@ public class Usuario {
 
 	@PrePersist
 	public void prePersist() throws CryptoException {
+		if (this.id == null) {
+			this.id = UUID.randomUUID().toString();
+		}
 		this.dtCriacao = LocalDateTime.now();
 		this.hash = CryptoUtils.generateKeyAsString();
 		this.senha = CryptoUtils.encrypt(this.senha, this.hash);

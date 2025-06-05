@@ -43,6 +43,6 @@ public class EventoDTO {
 	private Long idTipoEvento;
 
 	@Schema(example = "1")
-	private Long idUsuario;
+	private String idUsuario;
 
 }

@@ -17,6 +17,7 @@ import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.annotation.XAccessKey;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Token;
+import br.edu.ifsp.spo.bike_integration.response.ValidateTokenResponse;
 import br.edu.ifsp.spo.bike_integration.service.EmailService;
 import br.edu.ifsp.spo.bike_integration.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,8 +39,9 @@ public class TokenController {
 	@XAccessKey
 	@GetMapping(path = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Verifica se o token é válido para o email informado.")
-	public ResponseEntity<Boolean> isValidateToken(@RequestParam String token, @RequestParam String email) {
-		return ResponseEntity.status(HttpStatus.OK).body(tokenService.isValidToken(token, email));
+	public ResponseEntity<ValidateTokenResponse> isValidateToken(@RequestParam String token,
+			@RequestParam String email) {
+		return ResponseEntity.status(HttpStatus.OK).body(tokenService.validateTokenForRegister(token, email));
 	}
 
 	@Role(RoleType.ADMIN)
@@ -49,6 +51,24 @@ public class TokenController {
 	@ResponseStatus(HttpStatus.OK)
 	public void sendTokenEmail(@RequestParam String email) throws MessagingException {
 		emailService.sendCadastroTokenEmail(email, tokenService.generateToken(email).getTokenGerado());
+	}
+
+	@Role(RoleType.ADMIN)
+	@XAccessKey
+	@PostMapping(path = "/recover", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Gera um novo token de recuperacao e envia por email para o usuário.")
+	@ResponseStatus(HttpStatus.OK)
+	public void sendRecoveryTokenEmail(@RequestParam String email) throws MessagingException {
+		emailService.sendRecuperacaoTokenEmail(email, tokenService.generateToken(email).getTokenGerado());
+	}
+
+	@Role(RoleType.ADMIN)
+	@XAccessKey
+	@GetMapping(path = "recover/validate", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Verifica se o token é válido para o email informado.")
+	public ResponseEntity<ValidateTokenResponse> isValidateRecoveryToken(@RequestParam String token,
+			@RequestParam String email) {
+		return ResponseEntity.status(HttpStatus.OK).body(tokenService.validateTokenForRecover(token, email));
 	}
 
 	@Role(RoleType.ADMIN)

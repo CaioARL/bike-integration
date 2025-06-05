@@ -8,13 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifsp.spo.bike_integration.model.Token;
+import br.edu.ifsp.spo.bike_integration.model.Usuario;
 import br.edu.ifsp.spo.bike_integration.repository.TokenRepository;
+import br.edu.ifsp.spo.bike_integration.response.ValidateTokenResponse;
 
 @Service
 public class TokenService {
 
 	@Autowired
 	private TokenRepository tokenRepository;
+
+	@Autowired
+	private UsuarioService usuarioService;
 
 	public Token generateToken(String email) {
 		Token lastToken = tokenRepository.findLastTokenByEmail(email).orElse(null);
@@ -32,9 +37,30 @@ public class TokenService {
 		return this.tokenRepository.findByTokenGerado(tokenValue).orElse(null);
 	}
 
+	public ValidateTokenResponse validateTokenForRecover(String tokenValue, String email) {
+		ValidateTokenResponse response = ValidateTokenResponse.builder().success(false).token(null).build();
+		if (this.isValidToken(tokenValue, email)) {
+			response.setSuccess(true);
+			Usuario usuario = usuarioService.refreshSession(email);
+			if (usuario != null) {
+				response.setToken(usuario.getSessao().getToken());
+			}
+		}
+		return response;
+	}
+
+	public ValidateTokenResponse validateTokenForRegister(String tokenValue, String email) {
+		ValidateTokenResponse response = ValidateTokenResponse.builder().success(false).token(null).build();
+		if (this.isValidToken(tokenValue, email)) {
+			response.setSuccess(true);
+		}
+		return response;
+	}
+
 	public Boolean isValidToken(String tokenValue, String email) {
 		Token token = this.getToken(tokenValue);
-		if (token != null && email.equals(token.getEmail()) && token.getDtExpiracao().isAfter(LocalDateTime.now())) {
+		if (token != null && email.equals(token.getEmail())
+				&& token.getDtExpiracao().isAfter(LocalDateTime.now().plusMinutes(3))) {
 			this.disableToken(token);
 			return true;
 		}
@@ -78,4 +104,5 @@ public class TokenService {
 	private String generateToken() {
 		return UUID.randomUUID().toString().substring(0, 4);
 	}
+
 }

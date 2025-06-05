@@ -32,6 +32,10 @@ public interface DateUtils {
 		if (date.contains("/")) {
 			return fixDateHyphen(date);
 		}
+		// Se vier no formato yyyy-MM-ddTHH:mm ou yyyy-MM-ddTHH:mm:ss, retorna como está
+		if (date.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?")) {
+			return date;
+		}
 		return date;
 	}
 

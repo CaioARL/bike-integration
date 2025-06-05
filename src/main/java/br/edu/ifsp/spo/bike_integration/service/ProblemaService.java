@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.edu.ifsp.spo.bike_integration.aws.service.S3Service;
+import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.dto.ProblemaDTO;
 import br.edu.ifsp.spo.bike_integration.model.Problema;
+import br.edu.ifsp.spo.bike_integration.model.ProblemaReport;
 import br.edu.ifsp.spo.bike_integration.model.Trecho;
+import br.edu.ifsp.spo.bike_integration.repository.ProblemaReportRepository;
 import br.edu.ifsp.spo.bike_integration.repository.ProblemaRepository;
 import br.edu.ifsp.spo.bike_integration.util.S3Utils;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
@@ -32,6 +35,12 @@ public class ProblemaService {
 	@Autowired
 	private S3Service s3Service;
 
+	@Autowired
+	private ProblemaReportRepository problemaReportRepository;
+
+	@Autowired
+	private UsuarioService usuarioService;
+
 	@Value("${aws.s3.bucket-name}")
 	private String bucketName;
 
@@ -44,7 +53,6 @@ public class ProblemaService {
 				.filter(problema -> problema.getDtCriacao().isBefore(LocalDateTime.now().minusDays(30)))
 				.toList();
 	}
-
 
 	public boolean existsTrechoByLatitudeAndLongitude(Double latitude, Double longitude) {
 		return trechoService.findTrechoProximoByLocation(latitude, longitude) != null;
@@ -95,7 +103,7 @@ public class ProblemaService {
 		try {
 			Problema problema = loadProblemaById(idProblema);
 			if (problema != null) {
-				String s3Key = S3Utils.createS3Key("problema", problema.getId(), file);
+				String s3Key = S3Utils.createS3Key("problema", problema.getId().toString(), file);
 				PutObjectResponse response = s3Service.put(S3Utils.createRestPutObjectRequest(bucketName, s3Key),
 						file.getBytes());
 				if (response.sdkHttpResponse().isSuccessful()) {
@@ -126,13 +134,26 @@ public class ProblemaService {
 		return problemaRepository.findProblemasProximosByLocation(latitude, longitude, raio);
 	}
 
-	public void reportProblem(Long id) {
-		Problema problema = loadProblemaById(id);
+	public void reportProblem(Long problemaId, JwtUserDTO jwtUserDTO, boolean exists) {
+		String usuarioId = usuarioService.loadUsuarioByJwt(jwtUserDTO).getId();
+		Problema problema = loadProblemaById(problemaId);
+
+		boolean alreadyReported = problemaReportRepository.existsByUsuarioIdAndProblemaId(usuarioId, problemaId);
+		if (alreadyReported) {
+			throw new IllegalArgumentException("Usuário já reportou este problema.");
+		}
+
 		if (problema != null) {
-			problema.setReportCount(problema.getReportCount() + 1);
+			problema.setReportCount(problema.getReportCount() + (exists ? -1 : 1));
 			if (problema.getReportCount() >= 3) {
 				problema.setAtivo(false);
 			}
+
+			problemaReportRepository.save(ProblemaReport.builder()
+					.problema(problema)
+					.usuarioId(usuarioId)
+					.build());
+
 			problemaRepository.save(problema);
 		} else {
 			throw new RuntimeException("Problema não encontrado.");
