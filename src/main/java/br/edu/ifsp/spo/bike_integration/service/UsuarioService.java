@@ -61,7 +61,7 @@ public class UsuarioService {
 	}
 
 	public List<Usuario> loadUsuarioByNomeContain(String nomeUsuario) {
-		return usuarioRepository.findAllByNomeUsuarioContainingIgnoreCase(nomeUsuario)
+		return usuarioRepository.findAllByNomeContainingIgnoreCase(nomeUsuario)
 				.orElse(null);
 	}
 

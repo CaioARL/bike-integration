@@ -1,6 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +24,10 @@ import br.edu.ifsp.spo.bike_integration.rest.service.OpenStreetMapApiService;
 import br.edu.ifsp.spo.bike_integration.service.aws.S3Service;
 import br.edu.ifsp.spo.bike_integration.util.DateUtils;
 import br.edu.ifsp.spo.bike_integration.util.FormatUtils;
+import br.edu.ifsp.spo.bike_integration.util.ObjectMapperUtils;
 import br.edu.ifsp.spo.bike_integration.util.S3Utils;
 import br.edu.ifsp.spo.bike_integration.websocket.CustomWebSocketHandler;
+import br.edu.ifsp.spo.bike_integration.websocket.EventoSocketMessageDTO;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Service
@@ -85,9 +88,10 @@ public class EventoService {
 		return eventoRepository.countAll(null, null, null, null, null, null, null, null, null, null, null);
 	}
 
-	public Evento createEvento(EventoDTO eventoDto) {
+	public Evento createEvento(EventoDTO eventoDto, String username) {
 		Evento evento = this.createEventoInternal(eventoDto);
-		this.sendWebSocketMessage();
+		this.sendWebSocketMessage(usuarioService.loadUsuarioByNomeUsuario(username), "create",
+				"Um novo evento foi criado por outro usuário, atualize a lista.");
 		return evento;
 	}
 
@@ -129,10 +133,12 @@ public class EventoService {
 		}
 	}
 
-	public void deleteEvento(Long id) {
+	public void deleteEvento(Long id, String username) {
+		Usuario usuario = usuarioService.loadUsuarioByNomeUsuario(username);
 		Evento evento = eventoRepository.findById(id).orElse(null);
 		if (evento != null) {
 			eventoRepository.delete(evento);
+			this.sendWebSocketMessage(usuario, "delete", "Um evento foi excluído por outro usuário, atualize a lista.");
 		}
 	}
 
@@ -182,14 +188,18 @@ public class EventoService {
 				.usuario(usuario).build());
 	}
 
-	private void sendWebSocketMessage() {
-		String message = "{\"count\":" + this.countAllEventos() + "}";
+	private void sendWebSocketMessage(Usuario usuario, String action, String message) {
+		EventoSocketMessageDTO messageDTO = EventoSocketMessageDTO.builder()
+				.action(action)
+				.message(message)
+				.timestamp(LocalDateTime.now().toString())
+				.userId(usuario.getId()).build();
 
-		// Envia a mensagem para todos os WebSocketSessions ativas
-		CustomWebSocketHandler.getSessions().forEach(session -> {
+		CustomWebSocketHandler.getSessions().parallelStream().forEach(session -> {
 			if (session.isOpen()) {
 				try {
-					session.sendMessage(new TextMessage(message));
+					String json = ObjectMapperUtils.toJsonString(messageDTO);
+					session.sendMessage(new TextMessage(json));
 				} catch (IOException e) {
 					throw new BikeIntegrationCustomException("Erro ao enviar mensagem para a sessão WebSocket: "
 							+ session.getId() + " - " + e.getMessage());

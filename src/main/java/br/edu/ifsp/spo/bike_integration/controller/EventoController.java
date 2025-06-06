@@ -69,8 +69,10 @@ public class EventoController {
 	@BearerToken
 	@PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Cria um novo evento.")
-	public ResponseEntity<Evento> cadastrarEvento(@RequestBody EventoDTO evento) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.createEvento(evento));
+	public ResponseEntity<Evento> cadastrarEvento(@RequestBody EventoDTO evento,
+			@AuthenticationPrincipal JwtUserDTO jwtUserDTO) {
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(eventoService.createEvento(evento, jwtUserDTO.getNickname()));
 	}
 
 	@Role(RoleType.PJ)
@@ -107,8 +109,8 @@ public class EventoController {
 	@DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Deleta um evento pelo ID.")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deletarEvento(@PathVariable("id") Long id) {
-		eventoService.deleteEvento(id);
+	public void deletarEvento(@PathVariable("id") Long id, @AuthenticationPrincipal JwtUserDTO jwtUserDTO) {
+		eventoService.deleteEvento(id, jwtUserDTO.getNickname());
 	}
 
 	@Role({ RoleType.PF, RoleType.PJ })
