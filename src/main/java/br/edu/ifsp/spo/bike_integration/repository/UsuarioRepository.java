@@ -1,5 +1,6 @@
 package br.edu.ifsp.spo.bike_integration.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
 	Optional<Usuario> findById(String id);
 
 	Optional<Usuario> findByNomeUsuario(String nomeUsuario);
+
+	Optional<List<Usuario>> findAllByNomeUsuarioContainingIgnoreCase(String nomeUsuario);
 
 	Optional<Usuario> findByEmail(String email);
 

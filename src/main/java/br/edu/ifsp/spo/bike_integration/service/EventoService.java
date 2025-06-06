@@ -1,5 +1,6 @@
 package br.edu.ifsp.spo.bike_integration.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.socket.TextMessage;
 
 import br.edu.ifsp.spo.bike_integration.exception.BikeIntegrationCustomException;
 import br.edu.ifsp.spo.bike_integration.factory.GeoJsonUtilFactory;
@@ -22,6 +24,7 @@ import br.edu.ifsp.spo.bike_integration.service.aws.S3Service;
 import br.edu.ifsp.spo.bike_integration.util.DateUtils;
 import br.edu.ifsp.spo.bike_integration.util.FormatUtils;
 import br.edu.ifsp.spo.bike_integration.util.S3Utils;
+import br.edu.ifsp.spo.bike_integration.websocket.CustomWebSocketHandler;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Service
@@ -78,20 +81,14 @@ public class EventoService {
 		return ListEventoResponse.builder().eventos(eventos).totalRegistros(count).totalPaginas(totalPaginas).build();
 	}
 
+	public Long countAllEventos() {
+		return eventoRepository.countAll(null, null, null, null, null, null, null, null, null, null, null);
+	}
+
 	public Evento createEvento(EventoDTO eventoDto) {
-		Map<String, Double> coordenadas = openStreetMapApiService
-				.buscarCoordenadasPorEndereco(FormatUtils.formatEnderecoToOpenStreetMapApi(eventoDto.getEndereco()));
-		eventoDto.getEndereco().setLatitude(coordenadas.get("lat"));
-		eventoDto.getEndereco().setLongitude(coordenadas.get("lon"));
-
-		Usuario usuario = usuarioService.loadUsuarioById(eventoDto.getIdUsuario());
-
-		return eventoRepository.save(Evento.builder().nome(eventoDto.getNome()).descricao(eventoDto.getDescricao())
-				.data(DateUtils.parseDate(eventoDto.getData())).dtAtualizacao(eventoDto.getDataAtualizacao())
-				.endereco(eventoDto.getEndereco()).faixaKm(eventoDto.getFaixaKm()).gratuito(eventoDto.getGratuito())
-				.urlSite(eventoDto.getUrlSite())
-				.tipoEvento(tipoEventoService.loadTipoEvento(eventoDto.getIdTipoEvento()))
-				.usuario(usuario).build());
+		Evento evento = this.createEventoInternal(eventoDto);
+		this.sendWebSocketMessage();
+		return evento;
 	}
 
 	public void updateEvento(Long id, EventoDTO eventoDto) {
@@ -113,8 +110,10 @@ public class EventoService {
 			evento.setTipoEvento(tipoEventoService.loadTipoEvento(eventoDto.getIdTipoEvento()));
 			evento.setFaixaKm(eventoDto.getFaixaKm());
 			evento.setGratuito(eventoDto.getGratuito());
+			evento.setValor(eventoDto.getValor());
 			evento.setUrlSite(eventoDto.getUrlSite());
 			evento.setUsuario(usuario);
+			evento.setAprovado(false);
 
 			eventoRepository.save(evento);
 		}
@@ -165,6 +164,39 @@ public class EventoService {
 	/*
 	 * PRIVATE METHODS
 	 */
+
+	private Evento createEventoInternal(EventoDTO eventoDto) {
+		Map<String, Double> coordenadas = openStreetMapApiService
+				.buscarCoordenadasPorEndereco(FormatUtils.formatEnderecoToOpenStreetMapApi(eventoDto.getEndereco()));
+		eventoDto.getEndereco().setLatitude(coordenadas.get("lat"));
+		eventoDto.getEndereco().setLongitude(coordenadas.get("lon"));
+
+		Usuario usuario = usuarioService.loadUsuarioById(eventoDto.getIdUsuario());
+
+		return eventoRepository.save(Evento.builder().nome(eventoDto.getNome()).descricao(eventoDto.getDescricao())
+				.data(DateUtils.parseDate(eventoDto.getData())).dtAtualizacao(eventoDto.getDataAtualizacao())
+				.endereco(eventoDto.getEndereco()).faixaKm(eventoDto.getFaixaKm()).gratuito(eventoDto.getGratuito())
+				.valor(eventoDto.getValor())
+				.urlSite(eventoDto.getUrlSite())
+				.tipoEvento(tipoEventoService.loadTipoEvento(eventoDto.getIdTipoEvento()))
+				.usuario(usuario).build());
+	}
+
+	private void sendWebSocketMessage() {
+		String message = "{\"count\":" + this.countAllEventos() + "}";
+
+		// Envia a mensagem para todos os WebSocketSessions ativas
+		CustomWebSocketHandler.getSessions().forEach(session -> {
+			if (session.isOpen()) {
+				try {
+					session.sendMessage(new TextMessage(message));
+				} catch (IOException e) {
+					throw new BikeIntegrationCustomException("Erro ao enviar mensagem para a sessão WebSocket: "
+							+ session.getId() + " - " + e.getMessage());
+				}
+			}
+		});
+	}
 
 	private List<Evento> getEventosProximosByLocation(Double latitude, Double longitude, Double raio) {
 		return eventoRepository.findEventosProximosByLocation(latitude, longitude, raio);

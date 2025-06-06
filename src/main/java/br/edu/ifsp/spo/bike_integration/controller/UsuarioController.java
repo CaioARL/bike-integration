@@ -1,5 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,6 +51,14 @@ public class UsuarioController {
 	@Operation(summary = "Retorna os detalhes de um usuário pelo ID informado.")
 	public ResponseEntity<Usuario> get(@AuthenticationPrincipal JwtUserDTO jwtUserDTO) {
 		return ResponseEntity.ok(usuarioService.loadUsuarioByJwt(jwtUserDTO));
+	}
+
+	@Role({ RoleType.ADMIN })
+	@BearerToken
+	@GetMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Retorna os detalhes de um usuário pelo nome de usuário informado.")
+	public ResponseEntity<List<Usuario>> getByName(@RequestParam String name) {
+		return ResponseEntity.ok(usuarioService.loadUsuarioByNomeContain(name));
 	}
 
 	@Role(RoleType.ADMIN)

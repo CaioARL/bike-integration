@@ -53,6 +53,9 @@ public class Evento {
 	@Column(name = "gratuito")
 	private boolean gratuito;
 
+	@Column(name = "valor")
+	private Double valor;
+
 	@Column(name = "url_site")
 	private String urlSite;
 

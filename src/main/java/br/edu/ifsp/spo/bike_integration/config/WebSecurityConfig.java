@@ -93,6 +93,7 @@ public class WebSecurityConfig {
 		matchers.add(new RegexRequestMatcher("/api-docs.*", null));
 		matchers.add(new RegexRequestMatcher("/swagger.*", null));
 		matchers.add(new AntPathRequestMatcher("/v1/auth", HttpMethod.POST.name()));
+		matchers.add(new AntPathRequestMatcher("/ws/**", null));
 		return matchers;
 	}
 

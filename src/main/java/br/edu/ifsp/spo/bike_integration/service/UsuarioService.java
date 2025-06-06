@@ -1,6 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,11 @@ public class UsuarioService {
 
 	public Usuario loadUsuarioByNomeUsuario(String nomeUsuario) {
 		return usuarioRepository.findByNomeUsuario(nomeUsuario).orElse(null);
+	}
+
+	public List<Usuario> loadUsuarioByNomeContain(String nomeUsuario) {
+		return usuarioRepository.findAllByNomeUsuarioContainingIgnoreCase(nomeUsuario)
+				.orElse(null);
 	}
 
 	public Usuario loadUsuarioByJwt(JwtUserDTO jwtUserDTO) {

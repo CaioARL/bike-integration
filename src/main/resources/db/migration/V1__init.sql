@@ -60,12 +60,13 @@ create table if not exists `tipo_evento` (
 create table if not exists `evento` (
     `id` bigint primary key auto_increment,
     `nome` varchar(255) not null,
-    `descricao` varchar(255) not null,
+    `descricao` blob not null,
     `data` timestamp not null,
     `dt_atualizacao` timestamp,
     `endereco` varchar(255) not null,
     `faixa_km` bigint not null,
     `gratuito` boolean not null,
+    `valor` decimal(10,2),
     `url_site` varchar(255),
     `id_tipo_evento` bigint not null,
     `id_usuario` varchar(255) not null,
@@ -104,7 +105,7 @@ create table if not exists `avaliacao_infraestrutura_cicloviaria` (
     `id_usuario` varchar(255) not null,
     `id_infraestrutura_cicloviaria` bigint not null,
     `nota` int not null,
-    `comentario` varchar(255),
+    `comentario` blob,
     `dt_criacao` timestamp default (now()),
     constraint `fk_usuario_avaliacao` foreign key (`id_usuario`) references `usuario`(`id`),
     constraint `fk_infraestrutura_avaliacao` foreign key (`id_infraestrutura_cicloviaria`) references `infraestrutura_cicloviaria`(`id`)
@@ -118,7 +119,7 @@ create table if not exists `tipo_problema` (
 
 create table if not exists `problema` (
     `id` bigint primary key auto_increment,
-    `descricao` varchar(255) not null,
+    `descricao` blob not null,
     `latitude` varchar(255) not null,
     `longitude` varchar(255) not null,
     `dt_criacao` timestamp default (now()),

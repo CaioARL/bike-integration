@@ -36,6 +36,9 @@ public class EventoDTO {
 	@Schema(example = "true")
 	private Boolean gratuito;
 
+	@Schema(example = "215.15")
+	private Double valor;
+
 	@Schema(example = "https://www.exemplo.com")
 	private String urlSite;
 

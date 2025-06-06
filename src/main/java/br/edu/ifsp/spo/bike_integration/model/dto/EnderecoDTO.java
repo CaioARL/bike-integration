@@ -35,6 +35,9 @@ public class EnderecoDTO {
     @Schema(example = "123")
     private Long numero;
 
+    @Schema(example = "Apto 456")
+    private String complemento;
+
     @Hidden
     private Double latitude;
 
