@@ -67,8 +67,11 @@ public class Evento {
 	@JoinColumn(name = "id_usuario")
 	private Usuario usuario;
 
-	@Column(name = "aprovado", nullable = false)
-	private boolean aprovado;
+	@Column(name = "aprovado")
+	private Boolean aprovado;
+
+	@Column(name = "observacoes")
+	private String observacoes;
 
 	@Column(name = "s3_url")
 	private String s3Url;

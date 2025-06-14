@@ -89,8 +89,9 @@ public class EventoController {
 	@PutMapping(path = "/{id}/{aprovar}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Aprova um evento pelo ID.")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void aprovarEvento(@PathVariable("id") Long id, @PathVariable("aprovar") Boolean aprovar) {
-		eventoService.aprovarEvento(id, aprovar != null ? aprovar : false);
+	public void aprovarEvento(@PathVariable("id") Long id, @PathVariable("aprovar") Boolean aprovar,
+			@RequestParam(required = false) String motivoReprovacao) {
+		eventoService.aprovarEvento(id, aprovar != null ? aprovar : false, motivoReprovacao);
 	}
 
 	@Role(RoleType.PJ)

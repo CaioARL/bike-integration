@@ -43,6 +43,9 @@ public class EventoService {
 	private UsuarioService usuarioService;
 
 	@Autowired
+	private EmailService emailService;
+
+	@Autowired
 	private OpenStreetMapApiService openStreetMapApiService;
 
 	@Autowired
@@ -117,20 +120,24 @@ public class EventoService {
 			evento.setValor(eventoDto.getValor());
 			evento.setUrlSite(eventoDto.getUrlSite());
 			evento.setUsuario(usuario);
-			evento.setAprovado(false);
+			evento.setAprovado(null);
 
 			eventoRepository.save(evento);
 		}
 	}
 
-	public void aprovarEvento(Long id, Boolean aprovar) {
+	public void aprovarEvento(Long id, Boolean aprovar, String motivoReprovacao) {
 		Evento evento = eventoRepository.findById(id).orElse(null);
 		if (evento != null) {
 			evento.setAprovado(aprovar);
+			if (!aprovar) {
+				evento.setObservacoes(motivoReprovacao);
+			}
 			eventoRepository.save(evento);
 		} else {
 			throw new BikeIntegrationCustomException("Evento não encontrado.");
 		}
+		this.sendEmailNotification(aprovar, evento, evento.getUsuario());
 	}
 
 	public void deleteEvento(Long id, String username) {
@@ -210,5 +217,19 @@ public class EventoService {
 
 	private List<Evento> getEventosProximosByLocation(Double latitude, Double longitude, Double raio) {
 		return eventoRepository.findEventosProximosByLocation(latitude, longitude, raio);
+	}
+
+	private void sendEmailNotification(Boolean aprovado, Evento evento, Usuario usuario) {
+		try {
+			emailService.sendEventoStatusEmail(
+					usuario.getEmail(),
+					usuario.getNome(),
+					evento.getNome(),
+					aprovado,
+					evento.getObservacoes());
+		} catch (Exception e) {
+			throw new BikeIntegrationCustomException(
+					"Erro ao enviar notificação de aprovação/reprovação de evento: " + e.getMessage());
+		}
 	}
 }

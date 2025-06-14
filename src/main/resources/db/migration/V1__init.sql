@@ -70,7 +70,8 @@ create table if not exists `evento` (
     `url_site` varchar(255),
     `id_tipo_evento` bigint not null,
     `id_usuario` varchar(255) not null,
-    `aprovado` boolean not null default false,
+    `aprovado` boolean,
+    `observacoes` blob,
     `s3_url` varchar(255),
     constraint `fk_tipo_evento` foreign key (`id_tipo_evento`) references `tipo_evento`(`id`),
     constraint `fk_usuario_evento` foreign key (`id_usuario`) references `usuario`(`id`)
