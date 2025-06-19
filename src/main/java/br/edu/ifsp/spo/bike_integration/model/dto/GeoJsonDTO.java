@@ -40,6 +40,8 @@ public class GeoJsonDTO {
 		private String id;
 		private String type;
 		private Double notaMedia;
+		private String maneuverType;
+		private String maneuverModifier;
 	}
 
 	@Data

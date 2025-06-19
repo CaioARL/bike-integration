@@ -28,8 +28,8 @@ public class RotaController {
     @BearerToken
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Calcula a rota entre pontos.")
-    public ResponseEntity<GeoJsonDTO> calcularRota(@RequestParam("coords") String coords) {
-        return ResponseEntity.ok(openStreetMapApiService.buscarRotaPorString(coords));
+    public ResponseEntity<GeoJsonDTO> calcularRota(@RequestParam String coordenadas) {
+        return ResponseEntity.ok(openStreetMapApiService.buscarRotaPorString(coordenadas));
     }
 
 }

@@ -71,6 +71,10 @@ public class GeoJsonInfraestruturaUtils implements GeoJsonUtils<List<Infraestrut
 		return GeoJsonDTO.builder().type("FeatureCollection").features(List.of(feature)).build();
 	}
 
+	/*
+	 * PRIVATE METHODS
+	 */
+
 	private static FeatureDto createFeatureFromStep(RouteResponseDTO.StepDTO step, int id) {
 		return FeatureDto.builder()
 				.type("Feature")
@@ -79,6 +83,13 @@ public class GeoJsonInfraestruturaUtils implements GeoJsonUtils<List<Infraestrut
 						.name(step.getName())
 						.id(String.valueOf(id))
 						.type(step.getMode())
+						.maneuverType(step.getManeuver() != null && !"new name".equals(step.getManeuver().getType())
+								? step.getManeuver().getType()
+								: null)
+						.maneuverModifier(
+								step.getManeuver() != null && !"new name".equals(step.getManeuver().getModifier())
+										? step.getManeuver().getModifier()
+										: null)
 						.build())
 				.geometry(GeometryDto.builder()
 						.type("LineString")
@@ -86,10 +97,6 @@ public class GeoJsonInfraestruturaUtils implements GeoJsonUtils<List<Infraestrut
 						.build())
 				.build();
 	}
-
-	/*
-	 * PRIVATE METHODS
-	 */
 
 	private static FeatureDto createFeature(InfraestruturaCicloviaria via) {
 		PropertiesDto properties = PropertiesDto.builder()
