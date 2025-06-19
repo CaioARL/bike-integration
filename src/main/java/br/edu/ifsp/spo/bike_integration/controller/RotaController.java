@@ -12,7 +12,7 @@ import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO;
-import br.edu.ifsp.spo.bike_integration.service.RoteamentoService;
+import br.edu.ifsp.spo.bike_integration.rest.service.OpenStreetMapApiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -22,17 +22,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class RotaController {
 
     @Autowired
-    private RoteamentoService roteamentoService;
+    private OpenStreetMapApiService openStreetMapApiService;
 
     @Role({ RoleType.PF, RoleType.ADMIN })
     @BearerToken
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Calcula a rota entre dois pontos.")
-    public ResponseEntity<GeoJsonDTO> calcularRota(@RequestParam double origemLat,
-            @RequestParam double origemLng,
-            @RequestParam double destinoLat,
-            @RequestParam double destinoLng) {
-        return ResponseEntity.ok(roteamentoService.encontrarRotaGeoJson(origemLat, origemLng, destinoLat, destinoLng));
+    @Operation(summary = "Calcula a rota entre pontos.")
+    public ResponseEntity<GeoJsonDTO> calcularRota(@RequestParam("coords") String coords) {
+        return ResponseEntity.ok(openStreetMapApiService.buscarRotaPorString(coords));
     }
 
 }

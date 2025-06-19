@@ -149,6 +149,7 @@ create table if not exists `problema_report` (
 insert into `configuracao_api_externa` (nome, url) values
     ('BRASIL_API', 'https://brasilapi.com.br/api'), 
     ('OPEN_STREET_MAP_API', 'https://nominatim.openstreetmap.org'),
+    ('ROUTING_OPEN_STREET_MAP', 'https://routing.openstreetmap.de/routed-bike/route/v1/driving/'),
     ('VIA_CEP', 'https://viacep.com.br') As new
 on duplicate key update nome = new.nome, url = new.url;
 
