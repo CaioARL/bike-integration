@@ -1,6 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +10,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.edu.ifsp.spo.bike_integration.aws.service.S3Service;
-import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
-import br.edu.ifsp.spo.bike_integration.dto.UsuarioAdmDTO;
-import br.edu.ifsp.spo.bike_integration.dto.UsuarioDTO;
-import br.edu.ifsp.spo.bike_integration.dto.UsuarioUpdateDTO;
 import br.edu.ifsp.spo.bike_integration.exception.BikeIntegrationCustomException;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Usuario;
+import br.edu.ifsp.spo.bike_integration.model.dto.JwtUserDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioAdmDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioUpdateDTO;
 import br.edu.ifsp.spo.bike_integration.repository.UsuarioRepository;
 import br.edu.ifsp.spo.bike_integration.rest.service.OpenStreetMapApiService;
+import br.edu.ifsp.spo.bike_integration.service.aws.S3Service;
 import br.edu.ifsp.spo.bike_integration.util.FormatUtils;
 import br.edu.ifsp.spo.bike_integration.util.S3Utils;
 import br.edu.ifsp.spo.bike_integration.util.validate.CpfValidate;
@@ -57,6 +58,11 @@ public class UsuarioService {
 
 	public Usuario loadUsuarioByNomeUsuario(String nomeUsuario) {
 		return usuarioRepository.findByNomeUsuario(nomeUsuario).orElse(null);
+	}
+
+	public List<Usuario> loadUsuarioByNomeContain(String nomeUsuario) {
+		return usuarioRepository.findAllByNomeContainingIgnoreCase(nomeUsuario)
+				.orElse(null);
 	}
 
 	public Usuario loadUsuarioByJwt(JwtUserDTO jwtUserDTO) {

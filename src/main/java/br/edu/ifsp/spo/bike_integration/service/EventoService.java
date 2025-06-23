@@ -1,5 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.service;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -7,21 +9,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.socket.TextMessage;
 
-import br.edu.ifsp.spo.bike_integration.aws.service.S3Service;
-import br.edu.ifsp.spo.bike_integration.dto.EventoDTO;
-import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO;
 import br.edu.ifsp.spo.bike_integration.exception.BikeIntegrationCustomException;
 import br.edu.ifsp.spo.bike_integration.factory.GeoJsonUtilFactory;
 import br.edu.ifsp.spo.bike_integration.hardcode.PaginationType;
 import br.edu.ifsp.spo.bike_integration.model.Evento;
 import br.edu.ifsp.spo.bike_integration.model.Usuario;
+import br.edu.ifsp.spo.bike_integration.model.dto.EventoDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO;
+import br.edu.ifsp.spo.bike_integration.model.response.ListEventoResponse;
 import br.edu.ifsp.spo.bike_integration.repository.EventoRepository;
-import br.edu.ifsp.spo.bike_integration.response.ListEventoResponse;
 import br.edu.ifsp.spo.bike_integration.rest.service.OpenStreetMapApiService;
+import br.edu.ifsp.spo.bike_integration.service.aws.S3Service;
 import br.edu.ifsp.spo.bike_integration.util.DateUtils;
 import br.edu.ifsp.spo.bike_integration.util.FormatUtils;
+import br.edu.ifsp.spo.bike_integration.util.ObjectMapperUtils;
 import br.edu.ifsp.spo.bike_integration.util.S3Utils;
+import br.edu.ifsp.spo.bike_integration.websocket.CustomWebSocketHandler;
+import br.edu.ifsp.spo.bike_integration.websocket.EventoSocketMessageDTO;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Service
@@ -35,6 +41,9 @@ public class EventoService {
 
 	@Autowired
 	private UsuarioService usuarioService;
+
+	@Autowired
+	private EmailService emailService;
 
 	@Autowired
 	private OpenStreetMapApiService openStreetMapApiService;
@@ -78,20 +87,15 @@ public class EventoService {
 		return ListEventoResponse.builder().eventos(eventos).totalRegistros(count).totalPaginas(totalPaginas).build();
 	}
 
-	public Evento createEvento(EventoDTO eventoDto) {
-		Map<String, Double> coordenadas = openStreetMapApiService
-				.buscarCoordenadasPorEndereco(FormatUtils.formatEnderecoToOpenStreetMapApi(eventoDto.getEndereco()));
-		eventoDto.getEndereco().setLatitude(coordenadas.get("lat"));
-		eventoDto.getEndereco().setLongitude(coordenadas.get("lon"));
+	public Long countAllEventos() {
+		return eventoRepository.countAll(null, null, null, null, null, null, null, null, null, null, null);
+	}
 
-		Usuario usuario = usuarioService.loadUsuarioById(eventoDto.getIdUsuario());
-
-		return eventoRepository.save(Evento.builder().nome(eventoDto.getNome()).descricao(eventoDto.getDescricao())
-				.data(DateUtils.parseDate(eventoDto.getData())).dtAtualizacao(eventoDto.getDataAtualizacao())
-				.endereco(eventoDto.getEndereco()).faixaKm(eventoDto.getFaixaKm()).gratuito(eventoDto.getGratuito())
-				.urlSite(eventoDto.getUrlSite())
-				.tipoEvento(tipoEventoService.loadTipoEvento(eventoDto.getIdTipoEvento()))
-				.usuario(usuario).build());
+	public Evento createEvento(EventoDTO eventoDto, String username) {
+		Evento evento = this.createEventoInternal(eventoDto);
+		this.sendWebSocketMessage(usuarioService.loadUsuarioByNomeUsuario(username), "create",
+				"Um novo evento foi criado por outro usuário, atualize a lista.");
+		return evento;
 	}
 
 	public void updateEvento(Long id, EventoDTO eventoDto) {
@@ -113,27 +117,35 @@ public class EventoService {
 			evento.setTipoEvento(tipoEventoService.loadTipoEvento(eventoDto.getIdTipoEvento()));
 			evento.setFaixaKm(eventoDto.getFaixaKm());
 			evento.setGratuito(eventoDto.getGratuito());
+			evento.setValor(eventoDto.getValor());
 			evento.setUrlSite(eventoDto.getUrlSite());
 			evento.setUsuario(usuario);
+			evento.setAprovado(null);
 
 			eventoRepository.save(evento);
 		}
 	}
 
-	public void aprovarEvento(Long id, Boolean aprovar) {
+	public void aprovarEvento(Long id, Boolean aprovar, String motivoReprovacao) {
 		Evento evento = eventoRepository.findById(id).orElse(null);
 		if (evento != null) {
 			evento.setAprovado(aprovar);
+			if (!aprovar) {
+				evento.setObservacoes(motivoReprovacao);
+			}
 			eventoRepository.save(evento);
 		} else {
 			throw new BikeIntegrationCustomException("Evento não encontrado.");
 		}
+		this.sendEmailNotification(aprovar, evento, evento.getUsuario());
 	}
 
-	public void deleteEvento(Long id) {
+	public void deleteEvento(Long id, String username) {
+		Usuario usuario = usuarioService.loadUsuarioByNomeUsuario(username);
 		Evento evento = eventoRepository.findById(id).orElse(null);
 		if (evento != null) {
 			eventoRepository.delete(evento);
+			this.sendWebSocketMessage(usuario, "delete", "Um evento foi excluído por outro usuário, atualize a lista.");
 		}
 	}
 
@@ -166,7 +178,58 @@ public class EventoService {
 	 * PRIVATE METHODS
 	 */
 
+	private Evento createEventoInternal(EventoDTO eventoDto) {
+		Map<String, Double> coordenadas = openStreetMapApiService
+				.buscarCoordenadasPorEndereco(FormatUtils.formatEnderecoToOpenStreetMapApi(eventoDto.getEndereco()));
+		eventoDto.getEndereco().setLatitude(coordenadas.get("lat"));
+		eventoDto.getEndereco().setLongitude(coordenadas.get("lon"));
+
+		Usuario usuario = usuarioService.loadUsuarioById(eventoDto.getIdUsuario());
+
+		return eventoRepository.save(Evento.builder().nome(eventoDto.getNome()).descricao(eventoDto.getDescricao())
+				.data(DateUtils.parseDate(eventoDto.getData())).dtAtualizacao(eventoDto.getDataAtualizacao())
+				.endereco(eventoDto.getEndereco()).faixaKm(eventoDto.getFaixaKm()).gratuito(eventoDto.getGratuito())
+				.valor(eventoDto.getValor())
+				.urlSite(eventoDto.getUrlSite())
+				.tipoEvento(tipoEventoService.loadTipoEvento(eventoDto.getIdTipoEvento()))
+				.usuario(usuario).build());
+	}
+
+	private void sendWebSocketMessage(Usuario usuario, String action, String message) {
+		EventoSocketMessageDTO messageDTO = EventoSocketMessageDTO.builder()
+				.action(action)
+				.message(message)
+				.timestamp(LocalDateTime.now().toString())
+				.userId(usuario.getId()).build();
+
+		CustomWebSocketHandler.getSessions().parallelStream().forEach(session -> {
+			if (session.isOpen()) {
+				try {
+					String json = ObjectMapperUtils.toJsonString(messageDTO);
+					session.sendMessage(new TextMessage(json));
+				} catch (IOException e) {
+					throw new BikeIntegrationCustomException("Erro ao enviar mensagem para a sessão WebSocket: "
+							+ session.getId() + " - " + e.getMessage());
+				}
+			}
+		});
+	}
+
 	private List<Evento> getEventosProximosByLocation(Double latitude, Double longitude, Double raio) {
 		return eventoRepository.findEventosProximosByLocation(latitude, longitude, raio);
+	}
+
+	private void sendEmailNotification(Boolean aprovado, Evento evento, Usuario usuario) {
+		try {
+			emailService.sendEventoStatusEmail(
+					usuario.getEmail(),
+					usuario.getNome(),
+					evento.getNome(),
+					aprovado,
+					evento.getObservacoes());
+		} catch (Exception e) {
+			throw new BikeIntegrationCustomException(
+					"Erro ao enviar notificação de aprovação/reprovação de evento: " + e.getMessage());
+		}
 	}
 }

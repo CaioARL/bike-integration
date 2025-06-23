@@ -60,16 +60,18 @@ create table if not exists `tipo_evento` (
 create table if not exists `evento` (
     `id` bigint primary key auto_increment,
     `nome` varchar(255) not null,
-    `descricao` varchar(255) not null,
+    `descricao` blob not null,
     `data` timestamp not null,
     `dt_atualizacao` timestamp,
     `endereco` varchar(255) not null,
     `faixa_km` bigint not null,
     `gratuito` boolean not null,
+    `valor` decimal(10,2),
     `url_site` varchar(255),
     `id_tipo_evento` bigint not null,
     `id_usuario` varchar(255) not null,
-    `aprovado` boolean not null default false,
+    `aprovado` boolean,
+    `observacoes` blob,
     `s3_url` varchar(255),
     constraint `fk_tipo_evento` foreign key (`id_tipo_evento`) references `tipo_evento`(`id`),
     constraint `fk_usuario_evento` foreign key (`id_usuario`) references `usuario`(`id`)
@@ -104,7 +106,7 @@ create table if not exists `avaliacao_infraestrutura_cicloviaria` (
     `id_usuario` varchar(255) not null,
     `id_infraestrutura_cicloviaria` bigint not null,
     `nota` int not null,
-    `comentario` varchar(255),
+    `comentario` blob,
     `dt_criacao` timestamp default (now()),
     constraint `fk_usuario_avaliacao` foreign key (`id_usuario`) references `usuario`(`id`),
     constraint `fk_infraestrutura_avaliacao` foreign key (`id_infraestrutura_cicloviaria`) references `infraestrutura_cicloviaria`(`id`)
@@ -118,7 +120,7 @@ create table if not exists `tipo_problema` (
 
 create table if not exists `problema` (
     `id` bigint primary key auto_increment,
-    `descricao` varchar(255) not null,
+    `descricao` blob not null,
     `latitude` varchar(255) not null,
     `longitude` varchar(255) not null,
     `dt_criacao` timestamp default (now()),
@@ -147,6 +149,7 @@ create table if not exists `problema_report` (
 insert into `configuracao_api_externa` (nome, url) values
     ('BRASIL_API', 'https://brasilapi.com.br/api'), 
     ('OPEN_STREET_MAP_API', 'https://nominatim.openstreetmap.org'),
+    ('ROUTING_OPEN_STREET_MAP', 'https://routing.openstreetmap.de/routed-bike/route/v1/driving/'),
     ('VIA_CEP', 'https://viacep.com.br') As new
 on duplicate key update nome = new.nome, url = new.url;
 

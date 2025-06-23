@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifsp.spo.bike_integration.model.Token;
 import br.edu.ifsp.spo.bike_integration.model.Usuario;
+import br.edu.ifsp.spo.bike_integration.model.response.ValidateTokenResponse;
 import br.edu.ifsp.spo.bike_integration.repository.TokenRepository;
-import br.edu.ifsp.spo.bike_integration.response.ValidateTokenResponse;
 
 @Service
 public class TokenService {

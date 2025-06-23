@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.annotation.XAccessKey;
-import br.edu.ifsp.spo.bike_integration.dto.TipoEventoDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.TipoEvento;
+import br.edu.ifsp.spo.bike_integration.model.dto.TipoEventoDTO;
 import br.edu.ifsp.spo.bike_integration.service.TipoEventoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +30,7 @@ public class TipoEventoController {
 	@Autowired
 	private TipoEventoService tipoEventoService;
 
-	@Role({ RoleType.PF, RoleType.PJ , RoleType.ADMIN })
+	@Role({ RoleType.PF, RoleType.PJ, RoleType.ADMIN })
 	@BearerToken
 	@XAccessKey
 	@GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)

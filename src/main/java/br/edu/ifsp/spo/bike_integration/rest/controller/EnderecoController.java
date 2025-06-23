@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
-import br.edu.ifsp.spo.bike_integration.response.BrasilApiCepResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.BrasilApiCepResponse;
 import br.edu.ifsp.spo.bike_integration.rest.service.BrasilApiService;
 import br.edu.ifsp.spo.bike_integration.rest.service.OpenStreetMapApiService;
 import br.edu.ifsp.spo.bike_integration.util.FormatUtils;

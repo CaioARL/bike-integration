@@ -3,7 +3,7 @@ package br.edu.ifsp.spo.bike_integration.model;
 import java.time.LocalDateTime;
 
 import br.edu.ifsp.spo.bike_integration.converter.EnderecoConverter;
-import br.edu.ifsp.spo.bike_integration.dto.EnderecoDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.EnderecoDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -53,6 +53,9 @@ public class Evento {
 	@Column(name = "gratuito")
 	private boolean gratuito;
 
+	@Column(name = "valor")
+	private Double valor;
+
 	@Column(name = "url_site")
 	private String urlSite;
 
@@ -64,8 +67,11 @@ public class Evento {
 	@JoinColumn(name = "id_usuario")
 	private Usuario usuario;
 
-	@Column(name = "aprovado", nullable = false)
-	private boolean aprovado;
+	@Column(name = "aprovado")
+	private Boolean aprovado;
+
+	@Column(name = "observacoes")
+	private String observacoes;
 
 	@Column(name = "s3_url")
 	private String s3Url;

@@ -17,7 +17,7 @@ import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.annotation.XAccessKey;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Token;
-import br.edu.ifsp.spo.bike_integration.response.ValidateTokenResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.ValidateTokenResponse;
 import br.edu.ifsp.spo.bike_integration.service.EmailService;
 import br.edu.ifsp.spo.bike_integration.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -22,12 +22,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
-import br.edu.ifsp.spo.bike_integration.dto.EventoDTO;
-import br.edu.ifsp.spo.bike_integration.dto.GeoJsonDTO;
-import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Evento;
-import br.edu.ifsp.spo.bike_integration.response.ListEventoResponse;
+import br.edu.ifsp.spo.bike_integration.model.dto.EventoDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.GeoJsonDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.JwtUserDTO;
+import br.edu.ifsp.spo.bike_integration.model.response.ListEventoResponse;
 import br.edu.ifsp.spo.bike_integration.service.EventoService;
 import br.edu.ifsp.spo.bike_integration.service.UsuarioService;
 import br.edu.ifsp.spo.bike_integration.util.FileUtils;
@@ -69,8 +69,10 @@ public class EventoController {
 	@BearerToken
 	@PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Cria um novo evento.")
-	public ResponseEntity<Evento> cadastrarEvento(@RequestBody EventoDTO evento) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.createEvento(evento));
+	public ResponseEntity<Evento> cadastrarEvento(@RequestBody EventoDTO evento,
+			@AuthenticationPrincipal JwtUserDTO jwtUserDTO) {
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(eventoService.createEvento(evento, jwtUserDTO.getNickname()));
 	}
 
 	@Role(RoleType.PJ)
@@ -87,8 +89,9 @@ public class EventoController {
 	@PutMapping(path = "/{id}/{aprovar}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Aprova um evento pelo ID.")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void aprovarEvento(@PathVariable("id") Long id, @PathVariable("aprovar") Boolean aprovar) {
-		eventoService.aprovarEvento(id, aprovar != null ? aprovar : false);
+	public void aprovarEvento(@PathVariable("id") Long id, @PathVariable("aprovar") Boolean aprovar,
+			@RequestParam(required = false) String motivoReprovacao) {
+		eventoService.aprovarEvento(id, aprovar != null ? aprovar : false, motivoReprovacao);
 	}
 
 	@Role(RoleType.PJ)
@@ -107,8 +110,8 @@ public class EventoController {
 	@DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Deleta um evento pelo ID.")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deletarEvento(@PathVariable("id") Long id) {
-		eventoService.deleteEvento(id);
+	public void deletarEvento(@PathVariable("id") Long id, @AuthenticationPrincipal JwtUserDTO jwtUserDTO) {
+		eventoService.deleteEvento(id, jwtUserDTO.getNickname());
 	}
 
 	@Role({ RoleType.PF, RoleType.PJ })

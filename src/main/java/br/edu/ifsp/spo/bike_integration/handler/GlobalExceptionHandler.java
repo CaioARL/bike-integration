@@ -14,7 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import br.edu.ifsp.spo.bike_integration.exception.CryptoException;
-import br.edu.ifsp.spo.bike_integration.response.ErrorResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.ErrorResponse;
 import br.edu.ifsp.spo.bike_integration.util.ResponseUtils;
 
 @ControllerAdvice
@@ -25,41 +25,41 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
 		logger.error("IllegalArgumentException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro: \n" + ex.getMessage()), HttpStatus.BAD_REQUEST);
+		return ResponseUtils.createResponse(new ErrorResponse("Erro: " + ex.getMessage()), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(CryptoException.class)
 	public ResponseEntity<Object> handleCryptoException(CryptoException ex, WebRequest request) {
 		logger.error("CryptoException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro de criptografia: \n" + ex.getMessage()),
+		return ResponseUtils.createResponse(new ErrorResponse("Erro de criptografia: " + ex.getMessage()),
 				HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<Object> handleNotFoundException(NotFoundException ex, WebRequest request) {
 		logger.error("NotFoundException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro: \n" + "não encontrado."), HttpStatus.NOT_FOUND);
+		return ResponseUtils.createResponse(new ErrorResponse("Erro: " + "não encontrado."), HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
 	public ResponseEntity<Object> handleAccessDeniedException(
 			org.springframework.security.access.AccessDeniedException ex, WebRequest request) {
 		logger.error("AccessDeniedException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro de acesso: \n" + ex.getMessage()),
+		return ResponseUtils.createResponse(new ErrorResponse("Erro de acesso: " + ex.getMessage()),
 				HttpStatus.FORBIDDEN);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Object> handleGeneralException(Exception ex, WebRequest request) {
 		logger.error("General Exception caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro interno: \n" + ex.getMessage()),
+		return ResponseUtils.createResponse(new ErrorResponse("Erro interno: " + ex.getMessage()),
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<Object> handleRuntimeException(RuntimeException ex, WebRequest request) {
 		logger.error("RuntimeException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro interno: \n" + ex.getMessage()),
+		return ResponseUtils.createResponse(new ErrorResponse("Erro interno: " + ex.getMessage()),
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Object> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException ex,
 			WebRequest request) {
 		logger.error("InvalidDataAccessApiUsageException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro: \n" + ex.getMessage()),
+		return ResponseUtils.createResponse(new ErrorResponse("Erro: " + ex.getMessage()),
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -75,26 +75,26 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex,
 			WebRequest request) {
 		logger.error("MaxUploadSizeExceededException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro: \n" + ex.getMessage()), HttpStatus.BAD_REQUEST);
+		return ResponseUtils.createResponse(new ErrorResponse("Erro: " + ex.getMessage()), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(SizeLimitExceededException.class)
 	public ResponseEntity<Object> handleSizeLimitExceededException(SizeLimitExceededException ex,
 			WebRequest request) {
 		logger.error("SizeLimitExceededException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro: \n" + ex.getMessage()), HttpStatus.BAD_REQUEST);
+		return ResponseUtils.createResponse(new ErrorResponse("Erro: " + ex.getMessage()), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex,
 			WebRequest request) {
 		logger.error("DataIntegrityViolationException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro: \n" + ex.getMessage()), HttpStatus.BAD_REQUEST);
+		return ResponseUtils.createResponse(new ErrorResponse("Erro: " + ex.getMessage()), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(NullPointerException.class)
 	public ResponseEntity<Object> handleNullPointerException(NullPointerException ex, WebRequest request) {
 		logger.error("NullPointerException caught: ", ex);
-		return ResponseUtils.createResponse(new ErrorResponse("Erro: \n" + ex.getMessage()), HttpStatus.BAD_REQUEST);
+		return ResponseUtils.createResponse(new ErrorResponse("Erro: " + ex.getMessage()), HttpStatus.BAD_REQUEST);
 	}
 }

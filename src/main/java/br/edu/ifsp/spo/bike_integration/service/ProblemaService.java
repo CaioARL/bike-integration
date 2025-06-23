@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.edu.ifsp.spo.bike_integration.aws.service.S3Service;
-import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
-import br.edu.ifsp.spo.bike_integration.dto.ProblemaDTO;
 import br.edu.ifsp.spo.bike_integration.model.Problema;
 import br.edu.ifsp.spo.bike_integration.model.ProblemaReport;
 import br.edu.ifsp.spo.bike_integration.model.Trecho;
+import br.edu.ifsp.spo.bike_integration.model.dto.JwtUserDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.ProblemaDTO;
 import br.edu.ifsp.spo.bike_integration.repository.ProblemaReportRepository;
 import br.edu.ifsp.spo.bike_integration.repository.ProblemaRepository;
+import br.edu.ifsp.spo.bike_integration.service.aws.S3Service;
 import br.edu.ifsp.spo.bike_integration.util.S3Utils;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 

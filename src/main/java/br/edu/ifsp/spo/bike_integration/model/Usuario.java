@@ -6,9 +6,9 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.edu.ifsp.spo.bike_integration.converter.EnderecoConverter;
-import br.edu.ifsp.spo.bike_integration.dto.EnderecoDTO;
 import br.edu.ifsp.spo.bike_integration.exception.CryptoException;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
+import br.edu.ifsp.spo.bike_integration.model.dto.EnderecoDTO;
 import br.edu.ifsp.spo.bike_integration.util.CryptoUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
