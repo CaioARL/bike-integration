@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>br.edu.ifsp.spo</groupId>
 	<artifactId>bike-integration</artifactId>
-	<version>develop-SNAPSHOT</version>
+	<version>1.3.0</version>
 	<name>bike-integration</name>
 	<description>Api de integração para gerenciamento do APP principal</description>
 	<url />
