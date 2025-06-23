@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>develop-SNAPSHOT</version>
+		<version>3.4.3</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.edu.ifsp.spo</groupId>
 	<artifactId>bike-integration</artifactId>
-	<version>1.3.0</version>
+	<version>develop-SNAPSHOT</version>
 	<name>bike-integration</name>
 	<description>Api de integração para gerenciamento do APP principal</description>
 	<url />
