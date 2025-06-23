@@ -26,6 +26,13 @@ public class TrechoService {
 		return trechoRepository.findById(id).orElse(null);
 	}
 
+	public Trecho findTrechoProximoByLocation(double latitude, double longitude, double raio) {
+		return this.findTrechosProximosByLocation(latitude, longitude, raio)
+				.stream()
+				.findFirst()
+				.orElse(null);
+	}
+
 	public List<Trecho> findTrechosProximosByLocation(double latitude, double longitude, double raio) {
 		return trechoRepository.findTrechosProximosByLocation(latitude, longitude, raio);
 	}

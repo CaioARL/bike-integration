@@ -1,5 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,12 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.annotation.XAccessKey;
-import br.edu.ifsp.spo.bike_integration.dto.JwtUserDTO;
-import br.edu.ifsp.spo.bike_integration.dto.UsuarioAdmDTO;
-import br.edu.ifsp.spo.bike_integration.dto.UsuarioDTO;
-import br.edu.ifsp.spo.bike_integration.dto.UsuarioUpdateDTO;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.Usuario;
+import br.edu.ifsp.spo.bike_integration.model.dto.JwtUserDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioAdmDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioDTO;
+import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioUpdateDTO;
 import br.edu.ifsp.spo.bike_integration.service.EventoService;
 import br.edu.ifsp.spo.bike_integration.service.UsuarioService;
 import br.edu.ifsp.spo.bike_integration.util.FileUtils;
@@ -49,6 +51,14 @@ public class UsuarioController {
 	@Operation(summary = "Retorna os detalhes de um usuário pelo ID informado.")
 	public ResponseEntity<Usuario> get(@AuthenticationPrincipal JwtUserDTO jwtUserDTO) {
 		return ResponseEntity.ok(usuarioService.loadUsuarioByJwt(jwtUserDTO));
+	}
+
+	@Role({ RoleType.ADMIN })
+	@BearerToken
+	@GetMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Retorna os detalhes de um usuário pelo nome de usuário informado.")
+	public ResponseEntity<List<Usuario>> getByName(@RequestParam String name) {
+		return ResponseEntity.ok(usuarioService.loadUsuarioByNomeContain(name));
 	}
 
 	@Role(RoleType.ADMIN)

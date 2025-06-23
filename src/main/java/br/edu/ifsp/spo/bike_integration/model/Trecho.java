@@ -46,4 +46,19 @@ public class Trecho {
 	@OneToMany(mappedBy = "trecho", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Problema> problemas;
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Trecho trecho = (Trecho) o;
+		return id != null && id.equals(trecho.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
+
 }

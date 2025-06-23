@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.edu.ifsp.spo.bike_integration.dto.TipoEventoDTO;
 import br.edu.ifsp.spo.bike_integration.model.TipoEvento;
+import br.edu.ifsp.spo.bike_integration.model.dto.TipoEventoDTO;
 import br.edu.ifsp.spo.bike_integration.repository.TipoEventoRepository;
 
 @Service

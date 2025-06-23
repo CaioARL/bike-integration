@@ -12,7 +12,7 @@ import br.edu.ifsp.spo.bike_integration.annotation.BearerToken;
 import br.edu.ifsp.spo.bike_integration.annotation.Role;
 import br.edu.ifsp.spo.bike_integration.annotation.XAccessKey;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
-import br.edu.ifsp.spo.bike_integration.response.BrasilApiCnpjResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.BrasilApiCnpjResponse;
 import br.edu.ifsp.spo.bike_integration.rest.service.BrasilApiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -14,8 +14,8 @@ import br.edu.ifsp.spo.bike_integration.exception.BikeIntegrationCustomException
 import br.edu.ifsp.spo.bike_integration.hardcode.BrasilApiType;
 import br.edu.ifsp.spo.bike_integration.hardcode.ConfiguracaoApiType;
 import br.edu.ifsp.spo.bike_integration.model.ConfiguracaoApiExterna;
-import br.edu.ifsp.spo.bike_integration.response.BrasilApiCepResponse;
-import br.edu.ifsp.spo.bike_integration.response.BrasilApiCnpjResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.BrasilApiCepResponse;
+import br.edu.ifsp.spo.bike_integration.model.response.BrasilApiCnpjResponse;
 import br.edu.ifsp.spo.bike_integration.service.ConfiguracaoApiExternaService;
 import br.edu.ifsp.spo.bike_integration.util.FormatUtils;
 import jakarta.annotation.PostConstruct;

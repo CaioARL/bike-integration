@@ -5,8 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.edu.ifsp.spo.bike_integration.dto.EnderecoDTO;
-import br.edu.ifsp.spo.bike_integration.response.BrasilApiCepResponse;
+import br.edu.ifsp.spo.bike_integration.model.dto.EnderecoDTO;
+import br.edu.ifsp.spo.bike_integration.model.response.BrasilApiCepResponse;
 
 public class FormatUtils {
 
