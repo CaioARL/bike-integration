@@ -81,7 +81,7 @@ public class Usuario {
 	@JoinColumn(name = "id_nivel_habilidade", nullable = true)
 	private NivelHabilidade nivelHabilidade;
 
-	@OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = jakarta.persistence.CascadeType.REMOVE, orphanRemoval = true)
 	private Sessao sessao;
 
 	@Column(name = "s3_url")
