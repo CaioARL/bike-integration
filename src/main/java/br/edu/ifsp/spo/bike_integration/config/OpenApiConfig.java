@@ -37,7 +37,7 @@ public class OpenApiConfig {
 	GroupedOpenApi v1Api() {
 		return GroupedOpenApi.builder().group("v1")
 				.pathsToMatch("/v1/**")
-				.addOpenApiCustomizer(openApi -> openApi.info(createInfo("1.0")))
+				.addOpenApiCustomizer(openApi -> openApi.info(createInfo(this.buildProperties.getVersion())))
 				.build();
 	}
 

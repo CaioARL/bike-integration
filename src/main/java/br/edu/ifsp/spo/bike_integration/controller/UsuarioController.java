@@ -98,7 +98,7 @@ public class UsuarioController {
 		usuarioService.updateFotoUsuario(usuarioService.loadUsuarioByJwt(jwtUserDTO).getId(), file);
 	}
 
-	@Role(RoleType.ADMIN)
+	@Role({ RoleType.PF, RoleType.PJ, RoleType.ADMIN })
 	@BearerToken
 	@DeleteMapping
 	@Operation(summary = "Remove um usuário e seus eventos associados pelo ID informado.")
