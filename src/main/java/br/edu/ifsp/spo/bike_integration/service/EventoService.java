@@ -149,11 +149,6 @@ public class EventoService {
 		}
 	}
 
-	public void deleteEventosByUsuario(String idUsuario) {
-		Usuario usuario = usuarioService.loadUsuarioById(idUsuario);
-		eventoRepository.deleteByUsuario(usuario);
-	}
-
 	public void updateFotoEvento(Long id, MultipartFile file) {
 		try {
 			Evento evento = eventoRepository.findById(id).orElse(null);

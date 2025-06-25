@@ -10,6 +10,7 @@ import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
@@ -31,6 +32,10 @@ public interface S3Service extends AwsService {
     HeadObjectResponse getHead(HeadObjectRequest request) throws BikeIntegrationCustomException;
 
     String getUrl(String key);
+
+    String getKeyFromUrl(String url);
+
+    DeleteObjectResponse delete(String key) throws BikeIntegrationCustomException;
 
     default HeadObjectResponse getHeadSafe(HeadObjectRequest request) {
         try {
