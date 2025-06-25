@@ -1,6 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,6 +11,7 @@ import br.edu.ifsp.spo.bike_integration.exception.CryptoException;
 import br.edu.ifsp.spo.bike_integration.hardcode.RoleType;
 import br.edu.ifsp.spo.bike_integration.model.dto.EnderecoDTO;
 import br.edu.ifsp.spo.bike_integration.util.CryptoUtils;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -19,6 +21,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -81,11 +84,19 @@ public class Usuario {
 	@JoinColumn(name = "id_nivel_habilidade", nullable = true)
 	private NivelHabilidade nivelHabilidade;
 
-	@OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = jakarta.persistence.CascadeType.REMOVE, orphanRemoval = true)
+	@OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private Sessao sessao;
 
 	@Column(name = "s3_url")
 	private String s3Url;
+
+	@OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JsonIgnore
+	private List<Evento> eventos;
+
+	@OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JsonIgnore
+	private List<AvaliacaoInfraestruturaCicloviaria> avaliacoes;
 
 	@PrePersist
 	public void prePersist() throws CryptoException {

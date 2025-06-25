@@ -27,7 +27,6 @@ import br.edu.ifsp.spo.bike_integration.model.dto.JwtUserDTO;
 import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioAdmDTO;
 import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioDTO;
 import br.edu.ifsp.spo.bike_integration.model.dto.UsuarioUpdateDTO;
-import br.edu.ifsp.spo.bike_integration.service.EventoService;
 import br.edu.ifsp.spo.bike_integration.service.UsuarioService;
 import br.edu.ifsp.spo.bike_integration.util.FileUtils;
 import br.edu.ifsp.spo.bike_integration.util.validate.CpfValidate.CpfValidationResult;
@@ -41,9 +40,6 @@ public class UsuarioController {
 
 	@Autowired
 	private UsuarioService usuarioService;
-
-	@Autowired
-	private EventoService eventoService;
 
 	@Role({ RoleType.PF, RoleType.PJ })
 	@BearerToken
@@ -104,9 +100,7 @@ public class UsuarioController {
 	@Operation(summary = "Remove um usuário e seus eventos associados pelo ID informado.")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@AuthenticationPrincipal JwtUserDTO jwtUserDTO) {
-		String id = usuarioService.loadUsuarioByJwt(jwtUserDTO).getId();
-		eventoService.deleteEventosByUsuario(id);
-		usuarioService.deleteUsuario(id);
+		usuarioService.deleteUsuarioById(usuarioService.loadUsuarioByJwt(jwtUserDTO).getId());
 	}
 
 	@Role({ RoleType.PF, RoleType.ADMIN })

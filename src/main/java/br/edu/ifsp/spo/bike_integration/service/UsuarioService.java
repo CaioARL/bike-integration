@@ -149,7 +149,12 @@ public class UsuarioService {
 		}
 	}
 
-	public void deleteUsuario(String id) {
+	public void deleteUsuarioById(String id) {
+		// delete foto do usuário do S3
+		Usuario usuario = usuarioRepository.findById(id).orElse(null);
+		if (usuario != null && usuario.getS3Url() != null) {
+			s3Service.delete(s3Service.getKeyFromUrl(usuario.getS3Url()));
+		}
 		usuarioRepository.deleteById(id);
 	}
 
