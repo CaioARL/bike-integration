@@ -1,5 +1,7 @@
 package br.edu.ifsp.spo.bike_integration.service.aws.impl;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,8 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
@@ -74,6 +78,30 @@ public class S3ServiceImpl implements S3Service {
                     .getUrl(builder -> builder.bucket(bucket)
                             .key(key))
                     .toExternalForm();
+        } catch (Exception e) {
+            throw new BikeIntegrationCustomException(e);
+        }
+    }
+
+    @Override
+    public String getKeyFromUrl(String url) {
+        try {
+            URI s3Uri = URI.create(url);
+            String path = s3Uri.getPath().replace("/" + bucket, "");
+            return path.startsWith("/") ? path.substring(1) : path;
+        } catch (Exception e) {
+            throw new BikeIntegrationCustomException(e);
+        }
+    }
+
+    @Override
+    public DeleteObjectResponse delete(String key) throws BikeIntegrationCustomException {
+        try {
+            DeleteObjectRequest request = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build();
+            return this.client.deleteObject(request);
         } catch (Exception e) {
             throw new BikeIntegrationCustomException(e);
         }
