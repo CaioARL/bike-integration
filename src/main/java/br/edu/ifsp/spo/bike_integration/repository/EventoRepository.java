@@ -62,7 +62,7 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
 	@Query(value = "SELECT * FROM evento e WHERE ST_Distance_Sphere("
 			+ "POINT(CAST(JSON_EXTRACT(e.endereco, '$.longitude') AS DECIMAL(10,8)), "
 			+ "CAST(JSON_EXTRACT(e.endereco, '$.latitude') AS DECIMAL(10,8))), "
-			+ "POINT(:longitude, :latitude)) <= :raio"
+			+ "POINT(:longitude, :latitude)) <= :raio "
 			+ "AND e.aprovado = true", nativeQuery = true)
 	List<Evento> findEventosProximosByLocation(@Param("latitude") double latitude, @Param("longitude") double longitude,
 			@Param("raio") double raio);
